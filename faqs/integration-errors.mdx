@@ -1,0 +1,58 @@
+---
+title: "Integration Errors"
+description: "Troubleshooting integration issues"
+---
+
+<Note>
+Solutions for common integration errors.
+</Note>
+
+## HubSpot Issues
+
+<AccordionGroup>
+  <Accordion title="HubSpot sync failed">
+    - Check connection status in Admin → Integrations
+    - Re-authenticate if needed
+    - API rate limits may have been hit - wait and retry
+  </Accordion>
+  <Accordion title="Contacts not syncing">
+    - Verify contacts meet sync criteria
+    - Check for errors in sync log
+    - Some fields may not map correctly
+  </Accordion>
+</AccordionGroup>
+
+## Xero Issues
+
+<AccordionGroup>
+  <Accordion title="Xero authentication expired">
+    Xero tokens expire after 30 days. Re-authenticate in Admin → Integrations → Xero.
+  </Accordion>
+  <Accordion title="Invoices not appearing">
+    - Check the barrister has a Xero contact mapping
+    - Verify invoices are approved in Xero
+    - Review mapping in Admin → Xero Mappings
+  </Accordion>
+</AccordionGroup>
+
+## Microsoft 365 Issues
+
+<AccordionGroup>
+  <Accordion title="Calendar not syncing">
+    - Re-authenticate in Admin → Integrations
+    - Check user has granted calendar permissions
+    - Verify the mailbox is active
+  </Accordion>
+  <Accordion title="Authentication failed">
+    - Microsoft admin may have changed permissions
+    - Check with your IT administrator
+    - Try re-authorising the connection
+  </Accordion>
+</AccordionGroup>
+
+## Getting Help
+
+If issues persist, contact support@chambers.com with:
+- Which integration is affected
+- Error messages shown
+- When the issue started

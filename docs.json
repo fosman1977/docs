@@ -1,68 +1,256 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Chambers Platform",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#1e3a5f",
+    "light": "#3b82f6",
+    "dark": "#1e40af"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Getting Started",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Welcome",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "getting-started/welcome",
+              "getting-started/first-login",
+              "getting-started/navigation",
+              "getting-started/getting-help"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Account Setup",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "getting-started/password-reset",
+              "getting-started/browser-requirements",
+              "getting-started/multi-role-users"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Barrister Guide",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Getting Started",
             "pages": [
-              "api-reference/introduction"
+              "barrister/quick-start",
+              "barrister/dashboard"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Leads",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "barrister/understanding-leads",
+              "barrister/accepting-rejecting-leads"
+            ]
+          },
+          {
+            "group": "Opportunities",
+            "pages": [
+              "barrister/understanding-opportunities",
+              "barrister/participating-opportunities"
+            ]
+          },
+          {
+            "group": "Performance",
+            "pages": [
+              "barrister/utilisation-tracking",
+              "barrister/billing-dashboard",
+              "barrister/performance-metrics",
+              "barrister/engagement-score",
+              "barrister/contribution-tiers"
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              "barrister/managing-profile",
+              "barrister/calendar-integration"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Clerk Guide",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "clerk/quick-start",
+              "clerk/dashboard",
+              "clerk/team-overview"
+            ]
+          },
+          {
+            "group": "Lead Management",
+            "pages": [
+              "clerk/lead-overview",
+              "clerk/creating-leads",
+              "clerk/lead-details",
+              "clerk/editing-leads",
+              "clerk/my-leads",
+              "clerk/ai-suggestions",
+              "clerk/assigning-leads",
+              "clerk/multiple-acceptances"
+            ]
+          },
+          {
+            "group": "Opportunities",
+            "pages": [
+              "clerk/opportunity-management",
+              "clerk/creating-opportunities",
+              "clerk/opportunity-details",
+              "clerk/editing-opportunities"
+            ]
+          },
+          {
+            "group": "CRM",
+            "pages": [
+              "clerk/crm-overview",
+              "clerk/client-details",
+              "clerk/client-barrister-mapping"
+            ]
+          },
+          {
+            "group": "Barristers",
+            "pages": [
+              "clerk/barrister-profiles",
+              "clerk/barrister-details"
+            ]
+          },
+          {
+            "group": "Follow-ups",
+            "pages": [
+              "clerk/follow-up-system",
+              "clerk/follow-up-details",
+              "clerk/follow-up-tasks"
+            ]
+          },
+          {
+            "group": "Reporting",
+            "pages": [
+              "clerk/utilisation-tracking",
+              "clerk/billing-overview",
+              "clerk/case-records",
+              "clerk/practice-development",
+              "clerk/report-generation"
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              "clerk/settings",
+              "clerk/delegations",
+              "clerk/csv-import"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Management Guide",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "management/quick-start",
+              "management/executive-dashboard"
+            ]
+          },
+          {
+            "group": "AI & Insights",
+            "pages": [
+              "management/ai-insights",
+              "management/ai-features",
+              "management/ai-usage"
+            ]
+          },
+          {
+            "group": "Analytics",
+            "pages": [
+              "management/analytics-dashboard",
+              "management/lead-analytics",
+              "management/opportunity-analytics",
+              "management/client-analytics",
+              "management/utilisation-heatmap"
+            ]
+          },
+          {
+            "group": "Financial",
+            "pages": [
+              "management/financial-dashboard",
+              "management/cash-reserves",
+              "management/xero-mappings"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "management/user-management",
+              "management/role-management",
+              "management/2fa-setup",
+              "management/system-settings",
+              "management/security-settings",
+              "management/integration-management",
+              "management/audit-log"
+            ]
+          },
+          {
+            "group": "Operations",
+            "pages": [
+              "management/calendar-management",
+              "management/follow-up-oversight",
+              "management/global-search",
+              "management/report-management",
+              "management/gdpr-privacy"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Training",
+        "groups": [
+          {
+            "group": "Onboarding",
+            "pages": [
+              "training/barrister-checklist",
+              "training/clerk-checklist",
+              "training/management-checklist"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Help",
+        "groups": [
+          {
+            "group": "FAQs",
+            "pages": [
+              "faqs/general",
+              "faqs/barrister",
+              "faqs/clerk",
+              "faqs/management"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "faqs/login-issues",
+              "faqs/data-sync",
+              "faqs/integration-errors"
+            ]
+          },
+          {
+            "group": "Quick Links",
+            "pages": [
+              "quick-links/platform-access",
+              "quick-links/support-contacts",
+              "quick-links/policies"
             ]
           }
         ]
@@ -71,14 +259,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Platform",
+          "href": "https://chambers-platform.vercel.app",
+          "icon": "arrow-up-right-from-square"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Support",
+          "href": "mailto:support@chambers.com",
+          "icon": "envelope"
         }
       ]
     }
@@ -91,32 +279,18 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@chambers.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Open Platform",
+      "href": "https://chambers-platform.vercel.app"
     }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "linkedin": "https://linkedin.com/company/33-chancery-lane"
     }
   }
 }

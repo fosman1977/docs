@@ -11,30 +11,25 @@ Solutions for data and sync issues.
 
 | Integration | Frequency |
 |-------------|-----------|
-| HubSpot | Every 15 minutes |
 | Xero | Hourly |
-| Microsoft 365 | Every 30 minutes |
 
 ## Common Issues
 
 <AccordionGroup>
-  <Accordion title="Client data is out of date">
-    HubSpot syncs every 15 minutes. Wait for the next sync or check the last sync time in CRM.
-  </Accordion>
   <Accordion title="Financial data isn't showing">
     - Check Xero integration status in Admin
     - Verify the barrister has a Xero contact mapping
     - Last sync may have failed - try manual refresh
   </Accordion>
-  <Accordion title="Calendar isn't reflecting my availability">
-    - Calendar syncs every 30 minutes
-    - Check your Outlook calendar is correct
-    - Ensure events are not marked private
+  <Accordion title="Client data seems outdated">
+    - Client data is stored directly in the platform
+    - If you've imported data via CSV, check the import completed successfully
+    - Use the CRM search to verify the client record exists
   </Accordion>
   <Accordion title="New client isn't appearing">
-    - Check the client exists in HubSpot
-    - Wait for next sync cycle
-    - Verify sync is not paused
+    - Check the client was created successfully
+    - Verify you have the correct permissions to view the client
+    - Try refreshing the page or clearing your browser cache
   </Accordion>
   <Accordion title="Integration shows 'Disconnected'">
     - Re-authenticate in Admin → Integrations
@@ -45,4 +40,4 @@ Solutions for data and sync issues.
 
 ## Manual Sync
 
-Force a sync by going to Admin → Integrations and clicking "Sync Now" on the relevant integration.
+Force a Xero sync by going to Admin → Integrations and clicking "Sync Now" on the Xero integration.

@@ -9,20 +9,11 @@ Configure and manage integrations with external systems.
 
 ## Available Integrations
 
-### HubSpot CRM
-- Client data sync
-- Contact synchronisation
-- Company information
-
 ### Xero
-- Financial data
-- Invoicing
+- Financial data synchronisation
+- Invoice and billing information
 - Payment tracking
-
-### Microsoft 365
-- Calendar sync
-- Email integration
-- Authentication
+- Barrister revenue data
 
 ## Managing Integrations
 
@@ -32,22 +23,22 @@ Navigate to **Admin** → **Integrations**
 
 <Steps>
   <Step title="Select integration">
-    Choose from available options
+    Choose Xero from available options
   </Step>
   <Step title="Authenticate">
-    Log in to the external service
+    Log in to your Xero account
   </Step>
   <Step title="Authorise">
     Grant required permissions
   </Step>
   <Step title="Configure">
-    Set sync options
+    Set sync options and map barristers to Xero contacts
   </Step>
 </Steps>
 
 ### Sync Status
 
-Monitor each integration:
+Monitor the integration:
 - Last sync time
 - Records synced
 - Errors/warnings
@@ -55,6 +46,10 @@ Monitor each integration:
 ### Troubleshooting
 
 Common issues:
-- Authentication expired
+- Authentication expired (Xero tokens expire after 30 days)
 - Permission changes
 - API limits reached
+
+<Info>
+If you experience persistent issues, re-authenticate in Admin → Integrations → Xero.
+</Info>

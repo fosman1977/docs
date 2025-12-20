@@ -7,21 +7,6 @@ description: "Troubleshooting integration issues"
 Solutions for common integration errors.
 </Note>
 
-## HubSpot Issues
-
-<AccordionGroup>
-  <Accordion title="HubSpot sync failed">
-    - Check connection status in Admin → Integrations
-    - Re-authenticate if needed
-    - API rate limits may have been hit - wait and retry
-  </Accordion>
-  <Accordion title="Contacts not syncing">
-    - Verify contacts meet sync criteria
-    - Check for errors in sync log
-    - Some fields may not map correctly
-  </Accordion>
-</AccordionGroup>
-
 ## Xero Issues
 
 <AccordionGroup>
@@ -33,20 +18,30 @@ Solutions for common integration errors.
     - Verify invoices are approved in Xero
     - Review mapping in Admin → Xero Mappings
   </Accordion>
+  <Accordion title="Financial data not syncing">
+    - Check Xero connection status in Admin → Integrations
+    - Verify your Xero subscription is active
+    - API rate limits may have been reached - wait and retry
+  </Accordion>
+  <Accordion title="Barrister revenue not updating">
+    - Ensure the barrister is mapped to a Xero contact
+    - Check if invoices are correctly tagged in Xero
+    - Review the sync log for any errors
+  </Accordion>
 </AccordionGroup>
 
-## Microsoft 365 Issues
+## General Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Calendar not syncing">
-    - Re-authenticate in Admin → Integrations
-    - Check user has granted calendar permissions
-    - Verify the mailbox is active
+  <Accordion title="Integration shows disconnected">
+    - Navigate to Admin → Integrations
+    - Click on the affected integration
+    - Re-authenticate with your credentials
   </Accordion>
-  <Accordion title="Authentication failed">
-    - Microsoft admin may have changed permissions
-    - Check with your IT administrator
-    - Try re-authorising the connection
+  <Accordion title="Sync seems stuck">
+    - Check the last sync time
+    - Try clicking "Sync Now" to force a refresh
+    - If issues persist, contact support
   </Accordion>
 </AccordionGroup>
 

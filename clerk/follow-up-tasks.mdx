@@ -1,10 +1,10 @@
 ---
 title: "Follow-up Tasks"
-description: "Working with follow-up tasks"
+description: "Working with follow-up tasks and the Task Completion Modal"
 ---
 
 <Note>
-How to work with and manage follow-up tasks efficiently.
+How to work with and manage follow-up tasks efficiently, including recording detailed outcomes with the Task Completion Modal.
 </Note>
 
 ## Daily Workflow
@@ -27,6 +27,80 @@ Select multiple follow-ups to:
 - Reschedule together
 - Reassign
 
+## Completing Tasks with the Task Completion Modal
+
+When you complete a follow-up task, especially opportunity-related tasks, you'll use the **Task Completion Modal** to record detailed outcomes. This helps track the success of your business development activities.
+
+### Opening the Modal
+
+1. Navigate to your follow-up task
+2. Click the **Complete** button
+3. The Task Completion Modal will open
+
+### Recording the Outcome
+
+Select one of six outcome options to describe what happened:
+
+<CardGroup cols={2}>
+  <Card title="Successful" icon="circle-check">
+    Task completed with a positive outcome. The contact engaged and the goal was achieved.
+  </Card>
+  <Card title="No Response" icon="clock">
+    You attempted to reach the contact but received no reply. Consider scheduling a follow-up.
+  </Card>
+  <Card title="Declined" icon="circle-xmark">
+    The contact is not interested. Record this to avoid future contact on this matter.
+  </Card>
+  <Card title="Partial" icon="circle-exclamation">
+    Some progress was made but the task isn't fully complete. Document what was achieved.
+  </Card>
+  <Card title="Rescheduled" icon="rotate">
+    The contact asked to be contacted at a later date. Schedule the follow-up accordingly.
+  </Card>
+  <Card title="Failed" icon="ban">
+    Could not complete the task (e.g., email bounced, wrong contact details, etc.).
+  </Card>
+</CardGroup>
+
+### Additional Options
+
+After selecting an outcome, you can:
+
+- **Contact Responded** - Toggle this on if the contact replied to your outreach
+- **Notes** - Add detailed notes about what happened, any important information, or context for future reference
+
+### Scheduling Follow-up Tasks
+
+The modal allows you to automatically create a follow-up task based on the outcome:
+
+<Steps>
+  <Step title="Enable Follow-up">
+    Toggle **Schedule follow-up task** on. This is auto-enabled for "No Response" or "Rescheduled" outcomes.
+  </Step>
+  <Step title="Select Type">
+    Choose the follow-up type:
+    - Send follow-up email
+    - Schedule meeting/call
+    - LinkedIn connection
+    - Add to CRM
+    - Create lead
+    - Custom task
+  </Step>
+  <Step title="Add Description">
+    Enter a description of what needs to be done in the follow-up.
+  </Step>
+  <Step title="Set Due Date">
+    Choose when the follow-up should be completed. Defaults to 3 days from now.
+  </Step>
+  <Step title="Complete">
+    Click **Complete Task** to save the outcome and create the follow-up.
+  </Step>
+</Steps>
+
+<Tip>
+The system automatically suggests scheduling a follow-up when the outcome is "No Response" or "Rescheduled" to ensure no opportunities are lost.
+</Tip>
+
 ## Automation
 
 The system automatically creates follow-ups for:
@@ -36,11 +110,35 @@ The system automatically creates follow-ups for:
 
 ## Best Practices
 
-- Address overdue items first
-- Set realistic due dates
-- Add context in notes
-- Complete items promptly
+<AccordionGroup>
+  <Accordion title="Address overdue items first">
+    Overdue tasks should be your first priority each morning. These represent potential missed opportunities.
+  </Accordion>
+  <Accordion title="Set realistic due dates">
+    Consider your workload and the urgency of the task when setting due dates. Over-promising leads to overdue items.
+  </Accordion>
+  <Accordion title="Add context in notes">
+    Always add notes when completing tasks. This creates an audit trail and helps colleagues understand the history.
+  </Accordion>
+  <Accordion title="Track response rates">
+    Use the "Contact Responded" toggle consistently. This data helps identify which contacts engage most.
+  </Accordion>
+  <Accordion title="Use outcomes systematically">
+    Selecting the correct outcome helps generate accurate reports on business development success rates.
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+Always record whether contacts responded for accurate engagement tracking. This data feeds into opportunity analytics.
+</Warning>
+
+## Viewing Task History
+
+All completed tasks with their outcomes are logged and can be viewed:
+- From the opportunity's follow-up section
+- In the completed tasks tab
+- Through management reports
 
 <Tip>
-Review follow-ups at the start and end of each day.
+Review follow-ups at the start and end of each day to stay on top of your business development activities.
 </Tip>

@@ -16,7 +16,9 @@ graph LR
     subgraph "Chambers Platform"
         API[API Layer]
         Services[Service Layer]
+        Cache[(Redis Cache)]
         DB[(Supabase)]
+        WS[WebSocket]
     end
 
     subgraph "Financial"
@@ -48,7 +50,9 @@ graph LR
     Services --> Claude
     Services --> OpenAI
     Services --> Sentry
+    Services --> Cache
     Services --> DB
+    WS --> Services
 ```
 
 ## Available Integrations
@@ -61,6 +65,24 @@ graph LR
 | [Google Analytics](/developers/integrations/google-analytics) | Website analytics | Service Account | One-way (from GA) |
 | [AI (Claude & OpenAI)](/developers/integrations/ai) | AI insights, Suggestions | API Keys | Request/Response |
 | [Sentry](/developers/integrations/sentry) | Error monitoring | DSN | Outbound |
+| [Real-time (Socket.io)](/developers/integrations/realtime) | Live updates | WebSocket | Bidirectional |
+| [Caching (Redis)](/developers/integrations/caching) | Performance | REST API | Internal |
+
+## Package Versions
+
+Key integration packages used in the platform:
+
+| Package | Version | Integration |
+|---------|---------|-------------|
+| `xero-node` | 13.3.0 | Xero |
+| `@microsoft/microsoft-graph-client` | 3.x | Microsoft Graph |
+| `@anthropic-ai/sdk` | 0.71.0 | Claude AI |
+| `openai` | 4.24.7 | OpenAI |
+| `@sentry/sveltekit` | 10.30.0 | Sentry |
+| `@google-analytics/data` | 4.2.0 | Google Analytics |
+| `socket.io` | 4.7.x | Real-time |
+| `@upstash/redis` | 1.x | Redis caching |
+| `@upstash/ratelimit` | 1.x | Rate limiting |
 
 ## Common Patterns
 
@@ -85,7 +107,9 @@ Each integration respects API rate limits:
 | Xero | 60 req/min, 5000 req/day |
 | Microsoft Graph | 10,000 req/10 min |
 | OpenAI | Varies by tier |
+| Claude | Varies by tier |
 | Google Analytics | 50,000 req/day |
+| Internal API | 1000 req/min per user |
 
 ### Error Handling
 
@@ -102,19 +126,34 @@ Integrations implement graceful degradation:
 # Xero
 XERO_CLIENT_ID=your_client_id
 XERO_CLIENT_SECRET=your_client_secret
+XERO_REDIRECT_URI=your_redirect_uri
 
 # Microsoft Graph
 MS_GRAPH_CLIENT_ID=your_client_id
 MS_GRAPH_CLIENT_SECRET=your_client_secret
 MS_GRAPH_TENANT_ID=your_tenant_id
 
+# Microsoft Teams (optional)
+TEAMS_WEBHOOK_URL=your_webhook_url
+TEAMS_NOTIFICATIONS_ENABLED=true
+
 # Google Analytics
 GA_PROPERTY_ID=your_property_id
-GOOGLE_APPLICATION_CREDENTIALS=path_to_credentials.json
+GA_SERVICE_ACCOUNT_EMAIL=your_email
+GA_PRIVATE_KEY=your_private_key
+GA_PROJECT_ID=your_project_id
 
 # AI (Hybrid Architecture)
 ANTHROPIC_API_KEY=your_anthropic_key  # For Chamber Insights
 OPENAI_API_KEY=your_openai_key        # For Lead Suggestions
+
+# Sentry
+SENTRY_DSN=your_dsn
+VITE_SENTRY_DSN=your_public_dsn
+
+# Redis (Upstash)
+UPSTASH_REDIS_REST_URL=your_url
+UPSTASH_REDIS_REST_TOKEN=your_token
 ```
 
 ## Integration Status
@@ -145,3 +184,39 @@ Automatic syncs run on schedule:
 | Xero | Daily at 2am | Full |
 | Calendar | Every 30 minutes | Incremental |
 | Analytics | Daily at 3am | Full |
+
+## API Endpoints Summary
+
+### AI Endpoints
+
+| Endpoint | Method | Provider |
+|----------|--------|----------|
+| `/api/ai/chambers-insights` | GET | Claude |
+| `/api/ai/suggestions` | POST | OpenAI |
+| `/api/ai/analytics-insights` | POST | OpenAI |
+| `/api/ai/client-insights` | POST | OpenAI |
+| `/api/ai/opportunities/suggestions` | POST | OpenAI |
+
+### Financial Endpoints
+
+| Endpoint | Method | Integration |
+|----------|--------|-------------|
+| `/api/financial/xero/status` | GET | Xero |
+| `/api/financial/xero/sync` | POST | Xero |
+| `/api/financial/xero/mappings` | GET/PUT | Xero |
+
+### Real-time
+
+| Endpoint | Protocol | Purpose |
+|----------|----------|---------|
+| `/api/socket` | WebSocket | Real-time events |
+
+## Security Considerations
+
+All integrations follow security best practices:
+
+- **Encryption**: Tokens encrypted at rest (AES-256)
+- **Minimal Scope**: Only required permissions requested
+- **Audit Trail**: All operations logged
+- **PII Protection**: Data anonymized before AI calls
+- **GDPR Compliance**: Data handling meets regulations

@@ -272,7 +272,9 @@
               "developers/integrations/microsoft-teams",
               "developers/integrations/google-analytics",
               "developers/integrations/ai",
-              "developers/integrations/sentry"
+              "developers/integrations/sentry",
+              "developers/integrations/realtime",
+              "developers/integrations/caching"
             ]
           }
         ]

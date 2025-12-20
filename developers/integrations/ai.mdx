@@ -16,6 +16,35 @@ The Chambers Platform uses a **hybrid AI architecture** with both Anthropic Clau
 | Analytics Insights | **OpenAI** | GPT-4o-mini | Structured data analysis |
 | Risk Analysis | **OpenAI** | GPT-4o-mini | Pattern recognition |
 | Opportunity Suggestions | **OpenAI** | GPT-4o-mini | Fast recommendations |
+| Client Insights | **OpenAI** | GPT-4o-mini | Client intelligence analysis |
+
+## Implementation Architecture
+
+<Note>
+The codebase contains two implementations for Chamber Insights - one using Claude (active in production) and a legacy OpenAI version kept for benchmarking purposes.
+</Note>
+
+### Active Services
+
+| Service File | Provider | Status |
+|--------------|----------|--------|
+| `chambers-insights-claude.service.server.ts` | Claude Sonnet 4 | **Active** |
+| `suggestion-engine.server.ts` | OpenAI GPT-4o-mini | Active |
+| `analytics-insights.service.server.ts` | OpenAI GPT-4o-mini | Active |
+| `risk-insights.service.server.ts` | OpenAI GPT-4o-mini | Active |
+
+### Legacy Services
+
+| Service File | Provider | Status |
+|--------------|----------|--------|
+| `chambers-insights.service.server.ts` | OpenAI GPT-4o-mini | Legacy (benchmarking) |
+
+## Package Versions
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `@anthropic-ai/sdk` | 0.71.0 | Claude API client |
+| `openai` | 4.24.7 | OpenAI API client |
 
 ## Authentication
 
@@ -201,15 +230,16 @@ Get daily strategic insights (Claude-powered).
 }
 ```
 
-### GET /api/ai/suggestions
+### POST /api/ai/suggestions
 
 Get AI suggestions for lead assignment (OpenAI-powered).
 
-**Query Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| leadId | UUID | Lead to get suggestions for |
+**Request:**
+```json
+{
+  "leadId": "uuid"
+}
+```
 
 **Response:**
 ```json
@@ -245,6 +275,29 @@ Get AI insights for specific data (OpenAI-powered).
   "filters": {
     "practiceArea": "Commercial Litigation"
   }
+}
+```
+
+### POST /api/ai/client-insights
+
+Get AI-powered client intelligence analysis.
+
+**Request:**
+```json
+{
+  "clientId": "uuid",
+  "analysisType": "relationship_health"
+}
+```
+
+### POST /api/ai/opportunities/suggestions
+
+Get AI suggestions for opportunity matching.
+
+**Request:**
+```json
+{
+  "opportunityId": "uuid"
 }
 ```
 

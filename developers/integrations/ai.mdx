@@ -1,0 +1,393 @@
+---
+title: "AI Integration (Claude & OpenAI)"
+description: "Hybrid AI architecture with Claude and OpenAI for intelligent features"
+---
+
+# AI Integration (Claude & OpenAI)
+
+The Chambers Platform uses a **hybrid AI architecture** with both Anthropic Claude and OpenAI to power different features, each selected for optimal performance in their specific use cases.
+
+## Overview
+
+| Feature | AI Provider | Model | Reason |
+|---------|-------------|-------|--------|
+| Chamber Insights | **Claude (Anthropic)** | Claude Sonnet 4 | Superior reasoning for strategic analysis |
+| Lead Suggestions | **OpenAI** | GPT-4o-mini | Cost-effective matching |
+| Analytics Insights | **OpenAI** | GPT-4o-mini | Structured data analysis |
+| Risk Analysis | **OpenAI** | GPT-4o-mini | Pattern recognition |
+| Opportunity Suggestions | **OpenAI** | GPT-4o-mini | Fast recommendations |
+
+## Authentication
+
+### Required API Keys
+
+Both API keys are required for full AI functionality:
+
+```bash
+# Anthropic (Claude) - Required for Chamber Insights
+ANTHROPIC_API_KEY=sk-ant-...
+
+# OpenAI - Required for Lead Suggestions and Analytics
+OPENAI_API_KEY=sk-...
+```
+
+<Warning>
+Store both API keys in environment variables. Never commit to source code.
+</Warning>
+
+## Claude-Powered Features
+
+### Chamber Insights (`/api/ai/chambers-insights`)
+
+The flagship AI feature uses Claude Sonnet 4 for strategic business analysis.
+
+**Why Claude?**
+
+- Superior reasoning for complex financial analysis
+- Better at synthesising multiple data sources
+- More nuanced strategic recommendations
+- GDPR-compliant data handling
+
+**Capabilities:**
+
+- Financial risk analysis with severity scoring
+- Performance trend identification
+- Opportunity discovery
+- Executive summaries
+- Web-enhanced industry context
+
+**Service:** `chambers-insights-claude.service.server.ts`
+
+```typescript
+// Uses Anthropic SDK
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic({
+  apiKey: env.ANTHROPIC_API_KEY,
+});
+
+// Claude Sonnet 4 for complex reasoning
+const response = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  max_tokens: 4096,
+  messages: [{ role: 'user', content: prompt }],
+});
+```
+
+**Token Costs (Claude Sonnet 4):**
+
+| Type | Cost |
+|------|------|
+| Input | $3 per 1M tokens |
+| Output | $15 per 1M tokens |
+
+## OpenAI-Powered Features
+
+### Lead Suggestions (`/api/ai/suggestions`)
+
+Uses OpenAI GPT-4o-mini for fast, cost-effective barrister matching.
+
+**Why OpenAI?**
+
+- Faster response times for interactive features
+- More cost-effective for high-volume operations
+- Excellent at structured matching tasks
+
+**Service:** `suggestion-engine.server.ts`
+
+```typescript
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: env.OPENAI_API_KEY,
+});
+
+const response = await openai.chat.completions.create({
+  model: 'gpt-4o-mini',
+  messages: [{ role: 'user', content: prompt }],
+});
+```
+
+### Analytics Insights (`/api/ai/analytics-insights`)
+
+Uses OpenAI for lead conversion analysis and trend detection.
+
+**Service:** `analytics-insights.service.server.ts`
+
+### Risk Insights
+
+Uses OpenAI for financial risk pattern analysis.
+
+**Service:** `risk-insights.service.server.ts`
+
+**Token Costs (GPT-4o-mini):**
+
+| Type | Cost |
+|------|------|
+| Input | $0.15 per 1M tokens |
+| Output | $0.60 per 1M tokens |
+
+## Data Privacy
+
+### Anonymization (All AI Calls)
+
+All data sent to any AI provider is anonymized for GDPR compliance:
+
+```typescript
+class DataAnonymizer {
+  anonymize(data: LeadData): AnonymizedData {
+    return {
+      practiceArea: data.practiceArea, // Kept
+      jurisdiction: data.jurisdiction, // Kept
+      valueRange: this.bucketValue(data.value), // Bucketed
+      clientName: `CLIENT_${hash(data.clientName)}`, // Tokenized
+      description: this.redactPII(data.description), // Redacted
+    };
+  }
+}
+```
+
+### What Is NOT Sent to AI
+
+<Warning>
+The following data is never sent to AI providers:
+</Warning>
+
+- Client names (tokenized)
+- Contact details (removed)
+- Financial specifics (bucketed into ranges)
+- Personal identifiable information
+- Email addresses, phone numbers
+
+### Data Retention
+
+- **Anthropic (Claude)**: Does not retain API data for training
+- **OpenAI**: API data not used for training (business tier)
+
+## API Endpoints
+
+### GET /api/ai/chambers-insights
+
+Get daily strategic insights (Claude-powered).
+
+**Access:** Management and Treasurer only
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| year | number | Year for data analysis |
+| refresh | boolean | Force regeneration |
+| webEnhanced | boolean | Include industry context |
+
+**Response:**
+```json
+{
+  "success": true,
+  "financialRisk": {
+    "severity": "moderate",
+    "alerts": [...],
+    "recommendations": [...]
+  },
+  "performanceTrends": {
+    "growing": [...],
+    "declining": [...]
+  },
+  "executiveSummary": "...",
+  "metadata": {
+    "model": "claude-sonnet-4",
+    "processing_time_ms": 2500
+  }
+}
+```
+
+### GET /api/ai/suggestions
+
+Get AI suggestions for lead assignment (OpenAI-powered).
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| leadId | UUID | Lead to get suggestions for |
+
+**Response:**
+```json
+{
+  "suggestions": [
+    {
+      "barristerId": "uuid",
+      "barristerName": "John Smith KC",
+      "score": 0.92,
+      "reasons": [
+        "Specialises in Commercial Litigation",
+        "Extensive experience in contract disputes",
+        "Currently has capacity"
+      ]
+    }
+  ],
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "processing_time_ms": 450
+  }
+}
+```
+
+### POST /api/ai/analytics-insights
+
+Get AI insights for specific data (OpenAI-powered).
+
+**Request:**
+```json
+{
+  "type": "lead_conversion",
+  "period": "last_quarter",
+  "filters": {
+    "practiceArea": "Commercial Litigation"
+  }
+}
+```
+
+## Usage Monitoring
+
+### Tracking Usage
+
+Monitor AI usage at `/admin/ai`:
+
+- Daily request counts by provider
+- Cost estimates (Claude vs OpenAI)
+- Feature breakdown
+- Error rates
+
+### Usage Limits
+
+| Limit | Value | Purpose |
+|-------|-------|---------|
+| Daily suggestions | 100 | Cost control (OpenAI) |
+| Insights refresh | 1/day | Efficiency (Claude) |
+| Batch size | 50 | Rate limiting |
+
+### Cost Estimation
+
+| Feature | Provider | ~Cost per call |
+|---------|----------|---------------|
+| Chamber insights | Claude | £0.10-0.30 |
+| Lead suggestion | OpenAI | £0.01-0.03 |
+| Analytics insight | OpenAI | £0.02-0.05 |
+
+## Error Handling
+
+### Provider-Specific Errors
+
+**Claude (Anthropic):**
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `401` | Invalid API key | Check ANTHROPIC_API_KEY |
+| `429` | Rate limited | Implement backoff |
+| `overloaded` | High demand | Retry with delay |
+
+**OpenAI:**
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `401` | Invalid API key | Check OPENAI_API_KEY |
+| `429` | Rate limited | Implement backoff |
+| `context_length` | Input too long | Reduce input size |
+
+### Fallback Behavior
+
+When AI is unavailable:
+
+- **Lead suggestions**: Rule-based matching using specialisations
+- **Chamber insights**: Show cached insights or skip
+- **Analytics**: Basic statistical analysis
+
+### Circuit Breaker
+
+Both AI services use circuit breakers:
+
+```typescript
+const aiCircuitBreaker = new CircuitBreaker({
+  failureThreshold: 3,
+  resetTimeout: 60000, // 1 minute
+});
+```
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# Required for Chamber Insights
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Required for Lead Suggestions & Analytics
+OPENAI_API_KEY=sk-...
+```
+
+### Feature Flags
+
+Control AI features in Settings:
+
+| Flag | Description | Provider |
+|------|-------------|----------|
+| `ai.insights.enabled` | Enable chamber insights | Claude |
+| `ai.suggestions.enabled` | Enable lead suggestions | OpenAI |
+| `ai.analytics.enabled` | Enable analytics AI | OpenAI |
+
+## Best Practices
+
+### Choosing the Right Provider
+
+- **Complex reasoning tasks** - Claude (better analysis)
+- **High-volume operations** - OpenAI (more cost-effective)
+- **Interactive features** - OpenAI (faster response)
+- **Strategic reports** - Claude (deeper insights)
+
+### Cost Optimization
+
+- Cache Claude responses (expensive but valuable)
+- Use OpenAI for frequent, smaller requests
+- Batch similar OpenAI requests
+- Monitor usage at `/admin/ai`
+
+### Security
+
+- Never include PII in prompts to either provider
+- Anonymize all client data before AI calls
+- Audit AI usage regularly
+- Review generated content before display
+
+## Troubleshooting
+
+### No Chamber Insights
+
+1. Check `ANTHROPIC_API_KEY` is valid
+2. Verify user has management/treasurer role
+3. Check Anthropic service status
+4. Review error logs
+
+### No Lead Suggestions
+
+1. Check `OPENAI_API_KEY` is valid
+2. Verify AI suggestions are enabled
+3. Check usage limits not exceeded
+4. Review error logs
+
+### Slow Responses
+
+1. Check provider status pages (Anthropic/OpenAI)
+2. Reduce context size
+3. Consider caching more aggressively
+4. Check if circuit breaker is open
+
+## Service Files Reference
+
+| Service | Provider | File |
+|---------|----------|------|
+| Chamber Insights | Claude | `chambers-insights-claude.service.server.ts` |
+| Lead Suggestions | OpenAI | `suggestion-engine.server.ts` |
+| Analytics Insights | OpenAI | `analytics-insights.service.server.ts` |
+| Risk Insights | OpenAI | `risk-insights.service.server.ts` |
+| Batch Processing | OpenAI | `batch-processing.service.ts` |

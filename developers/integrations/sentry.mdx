@@ -1,0 +1,329 @@
+---
+title: "Sentry Error Monitoring"
+description: "Error tracking and performance monitoring with Sentry"
+---
+
+# Sentry Error Monitoring
+
+The Chambers Platform uses Sentry for error tracking, performance monitoring, and alerting in production environments.
+
+## Overview
+
+| Feature | Details |
+|---------|---------|
+| **Provider** | Sentry.io |
+| **Integration Type** | SDK-based |
+| **Direction** | Outbound only |
+| **Purpose** | Error tracking, performance monitoring |
+
+## Features
+
+### Error Tracking
+
+- Automatic capture of unhandled exceptions
+- Stack traces with source maps
+- Error grouping and deduplication
+- User context and breadcrumbs
+- Release tracking
+
+### Performance Monitoring
+
+- Transaction tracing
+- Database query performance
+- API endpoint latency
+- Core Web Vitals
+
+### Alerting
+
+- Real-time error notifications
+- Threshold-based alerts
+- Slack/Email integration
+- On-call scheduling
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# Required
+SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
+
+# Optional
+SENTRY_ENVIRONMENT=production
+SENTRY_RELEASE=chambers-platform@1.0.0
+SENTRY_TRACES_SAMPLE_RATE=0.1
+```
+
+### SvelteKit Integration
+
+```typescript
+// hooks.server.ts
+import * as Sentry from '@sentry/sveltekit';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.SENTRY_ENVIRONMENT || 'development',
+  release: process.env.SENTRY_RELEASE,
+
+  // Performance monitoring
+  tracesSampleRate: 0.1, // 10% of transactions
+
+  // Only send errors in production
+  enabled: process.env.NODE_ENV === 'production',
+
+  // Filter sensitive data
+  beforeSend(event) {
+    // Remove sensitive data
+    if (event.request?.headers) {
+      delete event.request.headers['authorization'];
+      delete event.request.headers['cookie'];
+    }
+    return event;
+  }
+});
+```
+
+### Client-Side Integration
+
+```typescript
+// hooks.client.ts
+import * as Sentry from '@sentry/sveltekit';
+
+Sentry.init({
+  dsn: process.env.PUBLIC_SENTRY_DSN,
+  environment: process.env.PUBLIC_SENTRY_ENVIRONMENT,
+
+  // Capture console errors
+  integrations: [
+    new Sentry.BrowserTracing(),
+    new Sentry.Replay({
+      maskAllText: true,
+      blockAllMedia: true,
+    }),
+  ],
+
+  // Session replay for errors only
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 1.0,
+});
+```
+
+## Usage
+
+### Automatic Error Capture
+
+Unhandled exceptions are captured automatically:
+
+```typescript
+// This error will be automatically captured
+throw new Error('Something went wrong');
+```
+
+### Manual Error Capture
+
+```typescript
+import * as Sentry from '@sentry/sveltekit';
+
+try {
+  await riskyOperation();
+} catch (error) {
+  Sentry.captureException(error, {
+    tags: {
+      feature: 'lead-assignment',
+      barrister_id: barristerId
+    },
+    extra: {
+      lead_id: leadId,
+      assigned_count: count
+    }
+  });
+
+  // Handle error gracefully
+  return { success: false, error: 'Operation failed' };
+}
+```
+
+### User Context
+
+```typescript
+// Set user context after login
+Sentry.setUser({
+  id: user.id,
+  email: user.email,
+  role: user.role_name
+});
+
+// Clear on logout
+Sentry.setUser(null);
+```
+
+### Breadcrumbs
+
+```typescript
+Sentry.addBreadcrumb({
+  category: 'navigation',
+  message: 'User navigated to leads page',
+  level: 'info'
+});
+
+Sentry.addBreadcrumb({
+  category: 'api',
+  message: 'Fetching lead assignments',
+  level: 'info',
+  data: {
+    lead_id: leadId
+  }
+});
+```
+
+### Performance Transactions
+
+```typescript
+const transaction = Sentry.startTransaction({
+  name: 'Lead Assignment',
+  op: 'task'
+});
+
+try {
+  const span = transaction.startChild({
+    op: 'db.query',
+    description: 'Fetch available barristers'
+  });
+
+  const barristers = await fetchBarristers();
+  span.finish();
+
+  const aiSpan = transaction.startChild({
+    op: 'ai.suggestion',
+    description: 'Generate AI suggestions'
+  });
+
+  const suggestions = await generateSuggestions();
+  aiSpan.finish();
+
+} finally {
+  transaction.finish();
+}
+```
+
+## Alert Configuration
+
+### Error Thresholds
+
+| Alert Type | Threshold | Action |
+|------------|-----------|--------|
+| New error | First occurrence | Slack notification |
+| Error spike | 10+ in 5 minutes | Email + Slack |
+| Critical error | Authentication failures | Immediate page |
+| Performance | P95 > 2 seconds | Daily digest |
+
+### Alert Rules
+
+```yaml
+# Example Sentry alert rules
+alerts:
+  - name: Authentication Failures
+    conditions:
+      - event_type: error
+      - tag: category:authentication
+      - frequency: 5 in 10 minutes
+    actions:
+      - notify: slack:#alerts
+      - notify: email:admin@chambers.com
+
+  - name: API Performance Degradation
+    conditions:
+      - event_type: transaction
+      - p95_duration: > 2000ms
+    actions:
+      - notify: slack:#performance
+```
+
+## Privacy Considerations
+
+### Data Scrubbing
+
+Sentry is configured to scrub sensitive data:
+
+- User passwords
+- API keys
+- Session tokens
+- Personal identifiable information (PII)
+- Financial data
+
+```typescript
+Sentry.init({
+  beforeSend(event) {
+    // Scrub sensitive fields
+    if (event.request?.data) {
+      const data = event.request.data;
+      if (typeof data === 'object') {
+        delete data.password;
+        delete data.api_key;
+        delete data.credit_card;
+      }
+    }
+    return event;
+  },
+
+  // Built-in data scrubbing
+  sendDefaultPii: false
+});
+```
+
+### GDPR Compliance
+
+- No PII stored without consent
+- Data retention: 90 days
+- Right to erasure supported
+- EU data residency available
+
+## Dashboard
+
+### Key Metrics
+
+Access the Sentry dashboard at `sentry.io`:
+
+- **Error Rate** - Errors per session
+- **Crash Free Rate** - Sessions without errors
+- **Apdex Score** - User satisfaction
+- **P95 Latency** - 95th percentile response time
+
+### Common Error Categories
+
+| Category | Description | Action |
+|----------|-------------|--------|
+| `authentication` | Login/session errors | Check auth service |
+| `database` | Database query failures | Check Supabase |
+| `integration` | External API failures | Check circuit breakers |
+| `validation` | Input validation errors | Review validation logic |
+
+## Troubleshooting
+
+### Errors Not Appearing
+
+1. Check `SENTRY_DSN` is correctly configured
+2. Verify `enabled: true` in production
+3. Check network connectivity to Sentry
+4. Review `beforeSend` filters
+
+### Source Maps Not Working
+
+1. Verify source maps are uploaded
+2. Check release version matches
+3. Ensure artifacts are uploaded in CI/CD
+
+### Performance Data Missing
+
+1. Check `tracesSampleRate` is > 0
+2. Verify transactions are finishing
+3. Review sampling configuration
+
+## Environment-Specific Settings
+
+| Setting | Development | Staging | Production |
+|---------|-------------|---------|------------|
+| `enabled` | false | true | true |
+| `tracesSampleRate` | 1.0 | 0.5 | 0.1 |
+| `replaysOnErrorSampleRate` | 0 | 0.5 | 1.0 |
+| `debug` | true | false | false |

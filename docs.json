@@ -254,6 +254,28 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "developers/overview"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "developers/integrations/xero",
+              "developers/integrations/microsoft-graph",
+              "developers/integrations/microsoft-teams",
+              "developers/integrations/google-analytics",
+              "developers/integrations/ai",
+              "developers/integrations/sentry"
+            ]
+          }
+        ]
       }
     ],
     "global": {

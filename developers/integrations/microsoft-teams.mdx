@@ -1,0 +1,344 @@
+---
+title: "Microsoft Teams Integration"
+description: "Notifications and alerts via Microsoft Teams webhooks"
+---
+
+# Microsoft Teams Integration
+
+The Chambers Platform integrates with Microsoft Teams to deliver notifications and alerts to chamber staff via webhooks.
+
+## Overview
+
+| Feature | Details |
+|---------|---------|
+| **Provider** | Microsoft Teams |
+| **Integration Type** | Incoming Webhooks |
+| **Direction** | Outbound only |
+| **Purpose** | Notifications, alerts, updates |
+
+## Features
+
+### Notification Types
+
+- **Lead Alerts** - New leads, assignments, responses
+- **Financial Alerts** - Cash flow warnings, aged debt alerts
+- **System Alerts** - Integration failures, errors
+- **Daily Digests** - Summary reports
+
+### Channel Support
+
+Configure different channels for different notification types:
+
+| Channel | Notifications |
+|---------|--------------|
+| #clerks | Lead assignments, responses |
+| #management | Financial alerts, AI insights |
+| #systems | Integration status, errors |
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# Teams Webhook URLs (one per channel)
+TEAMS_WEBHOOK_CLERKS=https://xxx.webhook.office.com/xxx
+TEAMS_WEBHOOK_MANAGEMENT=https://xxx.webhook.office.com/xxx
+TEAMS_WEBHOOK_SYSTEMS=https://xxx.webhook.office.com/xxx
+
+# Optional
+TEAMS_NOTIFICATIONS_ENABLED=true
+```
+
+### Creating Incoming Webhooks
+
+<Steps>
+  <Step title="Open Teams">
+    Navigate to the desired channel
+  </Step>
+  <Step title="Add Connector">
+    Click **...** > **Connectors**
+  </Step>
+  <Step title="Configure Webhook">
+    Find **Incoming Webhook** > **Configure**
+  </Step>
+  <Step title="Create">
+    Name the webhook (e.g., "Chambers Platform"), optionally upload an icon
+  </Step>
+  <Step title="Copy URL">
+    Copy the webhook URL and add to environment variables
+  </Step>
+</Steps>
+
+## Usage
+
+### Service Implementation
+
+```typescript
+// src/lib/services/teams.service.ts
+import { TEAMS_WEBHOOK_CLERKS, TEAMS_WEBHOOK_MANAGEMENT } from '$env/static/private';
+
+interface TeamsMessage {
+  '@type': 'MessageCard';
+  '@context': 'http://schema.org/extensions';
+  themeColor: string;
+  summary: string;
+  sections: TeamsSection[];
+  potentialAction?: TeamsAction[];
+}
+
+interface TeamsSection {
+  activityTitle: string;
+  activitySubtitle?: string;
+  facts?: { name: string; value: string }[];
+  text?: string;
+}
+
+class TeamsService {
+  async sendNotification(
+    channel: 'clerks' | 'management' | 'systems',
+    message: TeamsMessage
+  ): Promise<boolean> {
+    const webhookUrl = this.getWebhookUrl(channel);
+
+    if (!webhookUrl) {
+      console.warn(`Teams webhook not configured for channel: ${channel}`);
+      return false;
+    }
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message)
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error('Teams notification failed:', error);
+      return false;
+    }
+  }
+}
+
+export const teamsService = new TeamsService();
+```
+
+### Message Examples
+
+#### Lead Assignment
+
+```typescript
+await teamsService.sendNotification('clerks', {
+  '@type': 'MessageCard',
+  '@context': 'http://schema.org/extensions',
+  themeColor: '0076D7',
+  summary: 'New Lead Assigned',
+  sections: [{
+    activityTitle: 'New Lead: Commercial Fraud Matter',
+    activitySubtitle: 'Assigned to John Smith KC',
+    facts: [
+      { name: 'Client', value: 'Acme Corp' },
+      { name: 'Value', value: '£500,000' },
+      { name: 'Priority', value: 'High' }
+    ]
+  }],
+  potentialAction: [{
+    '@type': 'OpenUri',
+    name: 'View Lead',
+    targets: [{ os: 'default', uri: 'https://app.chambers.com/leads/123' }]
+  }]
+});
+```
+
+#### Financial Alert
+
+```typescript
+await teamsService.sendNotification('management', {
+  '@type': 'MessageCard',
+  '@context': 'http://schema.org/extensions',
+  themeColor: 'FF0000',
+  summary: 'Cash Reserve Warning',
+  sections: [{
+    activityTitle: 'Cash Reserve Below Target',
+    text: 'Current reserves at 85% of target level.',
+    facts: [
+      { name: 'Current Balance', value: '£425,000' },
+      { name: 'Target', value: '£500,000' },
+      { name: 'Shortfall', value: '£75,000' }
+    ]
+  }],
+  potentialAction: [{
+    '@type': 'OpenUri',
+    name: 'View Financial Dashboard',
+    targets: [{ os: 'default', uri: 'https://app.chambers.com/admin/financial' }]
+  }]
+});
+```
+
+#### System Alert
+
+```typescript
+await teamsService.sendNotification('systems', {
+  '@type': 'MessageCard',
+  '@context': 'http://schema.org/extensions',
+  themeColor: 'FF6600',
+  summary: 'Integration Warning',
+  sections: [{
+    activityTitle: 'Xero Sync Failed',
+    text: 'The scheduled Xero sync encountered an error.',
+    facts: [
+      { name: 'Error', value: 'Rate limit exceeded' },
+      { name: 'Time', value: '2024-01-15 02:00 GMT' },
+      { name: 'Next Retry', value: '2024-01-15 03:00 GMT' }
+    ]
+  }]
+});
+```
+
+## Notification Configuration
+
+### Settings
+
+Configure notifications in `/admin/settings`:
+
+```json
+{
+  "teams_notifications": {
+    "enabled": true,
+    "channels": {
+      "clerks": {
+        "lead_created": true,
+        "lead_assigned": true,
+        "lead_response": true
+      },
+      "management": {
+        "financial_alerts": true,
+        "ai_insights": true,
+        "daily_digest": true
+      },
+      "systems": {
+        "integration_errors": true,
+        "sync_failures": true
+      }
+    },
+    "quiet_hours": {
+      "enabled": true,
+      "start": "22:00",
+      "end": "07:00",
+      "timezone": "Europe/London"
+    }
+  }
+}
+```
+
+### Quiet Hours
+
+Configure quiet hours to prevent notifications during off-hours:
+
+- Notifications are queued during quiet hours
+- Critical alerts can bypass quiet hours
+- Queued notifications sent as digest
+
+## Rate Limits
+
+Microsoft Teams has rate limits for incoming webhooks:
+
+| Limit | Value |
+|-------|-------|
+| Messages per second | 4 |
+| Messages per minute | 50 |
+| Message size | 28 KB |
+
+### Rate Limit Handling
+
+```typescript
+class TeamsService {
+  private queue: TeamsMessage[] = [];
+  private processing = false;
+
+  async sendNotification(channel: string, message: TeamsMessage) {
+    this.queue.push({ channel, message });
+    this.processQueue();
+  }
+
+  private async processQueue() {
+    if (this.processing) return;
+    this.processing = true;
+
+    while (this.queue.length > 0) {
+      const item = this.queue.shift();
+      await this.send(item.channel, item.message);
+
+      // Rate limit: max 4 messages per second
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+
+    this.processing = false;
+  }
+}
+```
+
+## Troubleshooting
+
+### Notifications Not Appearing
+
+1. Verify webhook URL is correct
+2. Check network connectivity
+3. Ensure channel allows connectors
+4. Review Teams connector settings
+
+### Message Format Errors
+
+1. Validate JSON structure
+2. Check message size (< 28 KB)
+3. Ensure required fields present
+4. Test with simple message first
+
+### Rate Limiting
+
+1. Implement queue-based sending
+2. Add retry with exponential backoff
+3. Batch non-urgent notifications
+4. Use daily digests for reports
+
+## Security
+
+- Webhook URLs are stored securely in environment variables
+- URLs should not be committed to source control
+- Rotate webhooks periodically
+- Monitor for unauthorized use
+
+## Testing
+
+Test notifications without affecting production:
+
+```typescript
+// Test endpoint: POST /api/admin/test-teams
+export async function POST({ request, locals }) {
+  if (locals.user?.role_name !== 'management') {
+    return json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const { channel, type } = await request.json();
+
+  const testMessage = {
+    '@type': 'MessageCard',
+    '@context': 'http://schema.org/extensions',
+    themeColor: '00AA00',
+    summary: 'Test Notification',
+    sections: [{
+      activityTitle: 'Test Notification',
+      text: `This is a test notification for the ${channel} channel.`,
+      facts: [
+        { name: 'Type', value: type },
+        { name: 'Sent By', value: locals.user.email },
+        { name: 'Time', value: new Date().toISOString() }
+      ]
+    }]
+  };
+
+  const success = await teamsService.sendNotification(channel, testMessage);
+
+  return json({ success });
+}
+```

@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Chambers Platform",
   "colors": {
-    "primary": "#1e3a5f",
-    "light": "#3b82f6",
-    "dark": "#1e40af"
+    "primary": "#30372f",
+    "light": "#4a5248",
+    "dark": "#252b24"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -268,7 +268,6 @@
             "group": "Integrations",
             "pages": [
               "developers/integrations/xero",
-              "developers/integrations/microsoft-graph",
               "developers/integrations/microsoft-teams",
               "developers/integrations/google-analytics",
               "developers/integrations/ai",

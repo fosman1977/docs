@@ -4,45 +4,166 @@ description: "All AI-powered features in the Chambers Platform"
 ---
 
 <Note>
-Overview of all AI-powered features available in the platform.
+The platform uses a hybrid AI architecture with different models optimised for specific tasks.
 </Note>
 
-## AI Capabilities
+## AI Architecture
 
-The platform uses AI (powered by OpenAI GPT-4o-mini) for:
+The Chambers Platform uses two AI providers, each selected for their strengths:
 
-### Lead Matching
-Suggests optimal barristers for each lead based on:
-- Specialisations
-- Experience
-- Availability
-- Past performance
+<CardGroup cols={2}>
+  <Card title="OpenAI GPT-4o-mini" icon="bolt">
+    Fast, cost-effective matching for high-volume lead suggestions
+  </Card>
+  <Card title="Claude Sonnet 4" icon="brain">
+    Superior reasoning for strategic insights and complex analysis
+  </Card>
+</CardGroup>
 
-### Business Insights
-Analyses data to identify:
-- Trends and patterns
-- Risks and opportunities
-- Performance anomalies
+## Lead Suggestions (OpenAI)
 
-### Reporting
-AI-assisted report generation and analysis.
+**Model**: GPT-4o-mini
+
+AI-powered barrister matching suggests optimal assignments based on:
+
+- **Specialisations** - Practice area expertise matching
+- **Experience level** - KC/Silk, Senior Junior, Junior filtering
+- **Availability** - Calendar and utilisation consideration
+- **Jurisdiction** - Geographic and court experience
+- **Success rate** - Historical acceptance and conversion data
+- **Workload** - Current lead assignments
+
+<Tip>
+Each suggestion includes explainable reasoning so clerks understand why a barrister was recommended.
+</Tip>
+
+### How to Use
+
+<Steps>
+  <Step title="Open Lead">
+    Navigate to the lead you want to assign
+  </Step>
+  <Step title="Click AI Suggestions">
+    Click the "AI Suggestions" button
+  </Step>
+  <Step title="Review Recommendations">
+    Review the ranked suggestions with match scores and reasoning
+  </Step>
+  <Step title="Select & Assign">
+    Choose barristers and proceed with assignment
+  </Step>
+</Steps>
+
+## Chambers Insights (Claude)
+
+**Model**: Claude Sonnet 4 (Anthropic)
+
+Strategic AI analysis for management decision-making:
+
+### Daily Insights
+
+Automatically generated insights covering:
+
+- **Financial Analysis** - Cash flow trends, risk indicators, revenue patterns
+- **Performance Trends** - Barrister utilisation, lead conversion, engagement scores
+- **Opportunity Discovery** - Market trends, growth areas, client opportunities
+- **Risk Assessment** - Early warning indicators, aged debt concerns
+- **Executive Summaries** - Key metrics and recommended actions
+
+### Client Intelligence
+
+AI-powered analysis of client relationships:
+
+- Work done patterns
+- Engagement history
+- Revenue trends
+- Risk indicators
+
+### Custom Queries
+
+Ask specific questions about your chambers data:
+
+<Steps>
+  <Step title="Navigate to AI Insights">
+    Go to Admin → AI Insights
+  </Step>
+  <Step title="Enter Query">
+    Type your question in natural language
+  </Step>
+  <Step title="Review Response">
+    Claude analyses your data and provides insights
+  </Step>
+</Steps>
+
+<Info>
+Insights are cached for 24 hours to optimise performance and costs. Click "Refresh" to generate fresh analysis.
+</Info>
+
+## Analytics Insights (OpenAI)
+
+**Model**: GPT-4o-mini
+
+Data interpretation and trend detection:
+
+- Pattern recognition in metrics
+- Anomaly detection
+- Trend analysis
+- Actionable recommendations
 
 ## Privacy & Security
 
-### Data Handling
-- Client names are tokenised
-- No PII sent to AI
-- Data is anonymised
+### Data Anonymisation
 
-### Usage Limits
-Daily limits apply to AI features to manage costs.
+All data sent to AI providers is anonymised:
+
+- Client names are tokenised (e.g., "Client_A1B2")
+- Personal identifiable information (PII) is filtered
+- Barrister names are generalised where possible
+- Financial amounts are contextualised without specifics
+
+<Warning>
+No raw client data or PII is ever sent to external AI services. All anonymisation happens before API calls.
+</Warning>
+
+### GDPR Compliance
+
+- Data minimisation principles applied
+- Processing limited to necessary analysis
+- No data retained by AI providers beyond request
+- Audit trail of all AI interactions
+
+### Usage Tracking
+
+All AI usage is tracked for:
+
+- Cost management
+- Usage limits enforcement
+- Audit compliance
+- Performance monitoring
 
 ## Configuration
 
-AI features can be enabled/disabled from:
-**Admin** → **Settings** → **AI Configuration**
+AI features are managed from **Admin** → **Settings** → **AI Configuration**
 
-Options include:
-- Enable/disable features
-- Set usage limits
-- Configure notification thresholds
+### Available Settings
+
+| Setting | Description |
+|---------|-------------|
+| Enable Lead Suggestions | Toggle AI matching for leads |
+| Enable Insights | Toggle Claude-powered insights |
+| Daily Limit | Maximum AI requests per day |
+| Cost Threshold | Alert when costs exceed threshold |
+| Cache Duration | How long to cache insights |
+
+### Usage Monitoring
+
+View AI usage statistics at **Admin** → **AI**:
+
+- Daily/monthly request counts
+- Cost breakdown by feature
+- Usage trends
+- Error rates
+
+<Tip>
+Set up notification thresholds to be alerted when AI usage approaches limits.
+</Tip>

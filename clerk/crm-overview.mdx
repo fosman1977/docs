@@ -4,49 +4,209 @@ description: "Client Relationship Management in Chambers Platform"
 ---
 
 <Note>
-Manage client relationships with the integrated CRM system.
+The CRM system integrates with HubSpot to manage client relationships and track interactions.
 </Note>
 
-## CRM Features
+## Overview
 
-The CRM module provides:
+The CRM module centralises client information:
 
-- **Client Profiles** - Detailed client information
-- **Contact History** - Past interactions
-- **Barrister Relationships** - Who has worked with whom
-- **Lead History** - All leads from each client
+<CardGroup cols={2}>
+  <Card title="Client Profiles" icon="building">
+    Detailed company and contact information
+  </Card>
+  <Card title="Relationship Tracking" icon="handshake">
+    Client-barrister work history
+  </Card>
+  <Card title="Lead History" icon="clock-rotate-left">
+    All leads and matters by client
+  </Card>
+  <Card title="HubSpot Sync" icon="rotate">
+    Two-way synchronisation with HubSpot CRM
+  </Card>
+</CardGroup>
 
-## Data Sources
+## HubSpot Integration
 
-Client data comes from:
-- HubSpot sync (primary)
-- Manual entry
-- Lead creation
+The platform syncs with HubSpot CRM (Starter plan) for:
+
+### What Syncs
+
+| From HubSpot | To Platform |
+|--------------|-------------|
+| Companies | Client records |
+| Contacts | Client contacts |
+| Properties | Custom fields |
+| Activity | Interaction history |
+
+| From Platform | To HubSpot |
+|---------------|------------|
+| Lead outcomes | Deal updates |
+| Client notes | Activity timeline |
+| Barrister assignments | Custom properties |
+
+### Sync Frequency
+
+- **Automatic**: Every 15 minutes
+- **Manual**: Click "Sync Now" in CRM header
+- **On Change**: Key updates sync immediately
+
+<Info>
+HubSpot Starter plan limits: 300 contacts synced per month. Contact admin if approaching limits.
+</Info>
 
 ## Viewing Clients
 
-Navigate to **CRM** → **Clients** to see:
+Navigate to **CRM** → **Clients** to access the client list.
 
-- All clients list
-- Search and filter
-- Quick stats
+### List View
 
-## Key Information
+- Search by name, company, or industry
+- Filter by category, tier, or status
+- Sort by recent activity or alphabetically
+- Quick stats (total clients, active, new this month)
 
-Each client profile shows:
+### Client Categories
 
-| Section | Information |
-|---------|-------------|
-| Overview | Name, company, industry |
-| Contacts | Key people and their details |
-| History | Past leads and instructions |
-| Relationships | Barristers they've worked with |
-| Notes | Internal notes and tags |
+| Category | Description |
+|----------|-------------|
+| Solicitor | Law firm clients |
+| Corporation | Direct corporate clients |
+| Public Body | Government and public sector |
+| Individual | Private clients |
+| Other | Other client types |
 
-## Sync Status
+### Client Tiers
 
-Data syncs from HubSpot every 15 minutes. Check sync status in the CRM header.
+| Tier | Description |
+|------|-------------|
+| Platinum | Highest value clients |
+| Gold | High value clients |
+| Silver | Regular clients |
+| Bronze | Occasional clients |
+| New | Recently acquired |
 
-<Info>
-Changes made in HubSpot will appear in the platform after the next sync.
-</Info>
+## Client Profile
+
+Each client profile contains:
+
+### Overview Tab
+
+- Company name and details
+- Industry classification
+- Company size
+- Primary contact
+- Account status
+
+### Contacts Tab
+
+- All associated contacts
+- Contact roles and titles
+- Email and phone details
+- Preferred contact method
+
+### History Tab
+
+- All leads from this client
+- Matter outcomes
+- Instruction history
+- Revenue summary
+
+### Relationships Tab
+
+- Barristers who have worked with this client
+- Relationship strength indicators
+- Preferred barristers
+- Work type breakdown
+
+### Notes Tab
+
+- Internal notes
+- Tags and categories
+- Follow-up reminders
+- GDPR consent status
+
+## Client-Barrister Mapping
+
+Track which barristers work with which clients:
+
+### Viewing Mappings
+
+1. Open client profile
+2. Go to "Relationships" tab
+3. See all mapped barristers
+
+### Creating Mappings
+
+Mappings are created automatically when:
+- A lead from the client is assigned to a barrister
+- A barrister accepts work from the client
+- Manual mapping is created
+
+### Mapping Strength
+
+The system tracks relationship strength based on:
+- Number of instructions
+- Recent activity
+- Success rate
+- Revenue generated
+
+## Data Quality
+
+### Deduplication
+
+The system detects potential duplicate clients:
+
+1. Navigate to **CRM** → **Duplicates**
+2. Review suggested matches
+3. Merge or dismiss duplicates
+
+### Data Enrichment
+
+Client records are enriched with:
+- Industry classifications
+- Company size data
+- Contact verification status
+
+## CSV Import
+
+Import client data from other sources:
+
+<Steps>
+  <Step title="Prepare CSV">
+    Format your data with required columns (name, email, company)
+  </Step>
+  <Step title="Upload File">
+    Go to CRM → Import → Upload CSV
+  </Step>
+  <Step title="Map Fields">
+    Match CSV columns to platform fields
+  </Step>
+  <Step title="Review">
+    Preview imported records and check for duplicates
+  </Step>
+  <Step title="Import">
+    Confirm and import the data
+  </Step>
+</Steps>
+
+<Tip>
+Use the Lex export format for automatic field mapping when importing from practice management systems.
+</Tip>
+
+## GDPR Compliance
+
+Client records include consent tracking:
+
+- Marketing consent status
+- Data processing consent
+- Last consent update date
+- Consent source
+
+See [GDPR & Privacy](/management/gdpr-privacy) for more details.
+
+## Related Pages
+
+- [Client Details](/clerk/client-details) - Working with individual clients
+- [Client-Barrister Mapping](/clerk/client-barrister-mapping) - Managing relationships
+- [CSV Import](/clerk/csv-import) - Importing client data

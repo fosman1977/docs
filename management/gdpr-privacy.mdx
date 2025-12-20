@@ -4,56 +4,223 @@ description: "Data privacy and GDPR compliance features"
 ---
 
 <Note>
-Features supporting GDPR compliance and data privacy.
+The platform includes comprehensive GDPR compliance tools for managing personal data responsibly.
 </Note>
 
-## Data Protection
+## Overview
 
-The platform includes:
-- Data encryption
-- Access controls
-- Audit logging
-- Data minimisation
+The Chambers Platform is designed with privacy by design principles:
 
-## GDPR Features
+- **Data Minimisation** - Only collect necessary data
+- **Purpose Limitation** - Data used only for stated purposes
+- **Storage Limitation** - Automatic retention policies
+- **Security** - Encryption and access controls
+- **Accountability** - Full audit trails
 
-### Subject Access Requests
-Process data requests:
-- Export user data
-- Provide data copies
-- Track requests
+## Subject Access Requests (SAR)
 
-### Right to Erasure
-Handle deletion requests:
-- Identify related data
-- Execute deletion
-- Document compliance
+Handle requests from individuals to access their data.
 
-### Consent Management
-Track consent for:
-- Marketing communications
-- Data processing
-- Third-party sharing
+### Processing a SAR
+
+<Steps>
+  <Step title="Receive Request">
+    Log the request in Admin → GDPR → Subject Requests
+  </Step>
+  <Step title="Verify Identity">
+    Confirm the requester's identity before proceeding
+  </Step>
+  <Step title="Generate Export">
+    Click "Export Data" to compile all data for the individual
+  </Step>
+  <Step title="Review Export">
+    Review the exported data before sharing
+  </Step>
+  <Step title="Deliver & Document">
+    Provide the data and mark the request as completed
+  </Step>
+</Steps>
+
+### Data Export Contents
+
+Exports include:
+- Profile information
+- Lead history and interactions
+- Communication records
+- Activity logs
+- Consent records
+
+<Info>
+Exports are generated in JSON format with a human-readable summary.
+</Info>
+
+## Right to Erasure
+
+Handle deletion requests ("right to be forgotten").
+
+### Processing Deletion Requests
+
+<Steps>
+  <Step title="Receive Request">
+    Log the deletion request
+  </Step>
+  <Step title="Assess Scope">
+    Identify all data related to the individual
+  </Step>
+  <Step title="Check Exemptions">
+    Verify no legal holds or retention requirements apply
+  </Step>
+  <Step title="Execute Deletion">
+    Use Admin → GDPR → Delete Data to remove records
+  </Step>
+  <Step title="Document">
+    Record the deletion for compliance purposes
+  </Step>
+</Steps>
+
+<Warning>
+Some data may need to be retained for legal or regulatory purposes (e.g., financial records, court documents). The system will flag these exemptions.
+</Warning>
+
+### What Gets Deleted
+
+| Data Type | Action |
+|-----------|--------|
+| Personal details | Deleted |
+| Contact information | Deleted |
+| Activity history | Anonymised |
+| Financial records | Retained (legal requirement) |
+| Audit logs | Anonymised |
+
+## Consent Management
+
+Track and manage consent for data processing.
+
+### Consent Types
+
+- **Platform Usage** - Required for account access
+- **Marketing** - Optional email communications
+- **Analytics** - Usage tracking for improvements
+- **Third-party Sharing** - Integration data sharing
+
+### Managing Consent
+
+View and update consent status at:
+- **Individual level**: Client/contact detail pages
+- **Bulk management**: Admin → GDPR → Consent Management
 
 ## Data Retention
 
-Configure retention:
-- Default periods
-- Category-specific rules
-- Automatic deletion
+Configure automatic data retention policies.
 
-## Documentation
+### Default Retention Periods
 
-Maintain compliance records:
-- Processing activities
-- Data flows
-- Security measures
+| Data Category | Default Period |
+|---------------|----------------|
+| Active leads | Indefinite (while active) |
+| Closed leads | 7 years |
+| Client records | 7 years after last activity |
+| Communication logs | 3 years |
+| Audit logs | 7 years |
+| Session data | 30 days |
+
+### Custom Policies
+
+Create category-specific retention rules:
+
+1. Navigate to **Admin** → **Settings** → **Data Retention**
+2. Select data category
+3. Set retention period
+4. Enable automatic deletion (optional)
+5. Save policy
+
+<Tip>
+Review retention policies annually to ensure compliance with current regulations.
+</Tip>
+
+## Audit Trail
+
+All data access and modifications are logged.
+
+### Audit Log Contents
+
+- Who accessed/modified data
+- What was accessed/changed
+- When the action occurred
+- IP address and session info
+
+### Accessing Audit Logs
+
+Navigate to **Admin** → **Audit Log**
+
+Filter by:
+- Date range
+- User
+- Action type
+- Data category
+
+## AI & Privacy
+
+### Data Anonymisation
+
+All data sent to AI providers is anonymised:
+
+- Client names tokenised (e.g., "Client_A1B2")
+- Personal identifiers removed
+- Financial amounts generalised
+- Location data abstracted
+
+### AI Data Handling
+
+- No PII sent to external AI services
+- AI providers do not retain query data
+- All AI interactions logged for audit
+
+See [AI Features](/management/ai-features) for more details.
+
+## Security Measures
+
+### Encryption
+
+- Data encrypted at rest (AES-256)
+- Data encrypted in transit (TLS 1.3)
+- Database-level encryption
+
+### Access Controls
+
+- Role-based access control (RBAC)
+- Row-level security (RLS) on sensitive tables
+- Session timeouts
+- Two-factor authentication (2FA)
+
+### Monitoring
+
+- Failed login attempt tracking
+- Suspicious activity alerts
+- Real-time security monitoring
 
 ## Privacy Settings
 
-Access from **Admin** → **Privacy**
+Access all privacy controls from **Admin** → **Settings** → **Privacy**
 
-Configure:
-- Retention periods
-- Consent requirements
-- Data export options
+### Available Settings
+
+| Setting | Description |
+|---------|-------------|
+| Default Retention | Base retention period for new data |
+| Consent Required | Which consents are mandatory |
+| Export Format | JSON or CSV for data exports |
+| Anonymisation Level | How aggressively to anonymise |
+| Audit Detail Level | Granularity of audit logging |
+
+## Compliance Reports
+
+Generate compliance documentation:
+
+- Data processing inventory
+- Consent status report
+- Retention compliance report
+- Access request log
+- Deletion request log
+
+Access from **Admin** → **GDPR** → **Reports**

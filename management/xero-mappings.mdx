@@ -4,49 +4,137 @@ description: "Managing Xero integration and contact mappings"
 ---
 
 <Note>
-Configure how platform contacts map to Xero.
+Link barristers to their Xero contacts for accurate financial tracking and billing attribution.
 </Note>
 
-## What Are Mappings?
+## Overview
 
-Mappings link platform entities to Xero contacts:
-- Barristers → Xero contacts
-- Clients → Xero contacts
+Xero mappings connect platform barrister profiles to their corresponding Xero contacts. This enables:
 
-## Why Mappings Matter
+- **Work Done Tracking** - Aggregate invoiced work by barrister
+- **Contribution Calculations** - Automatic tier assignment (14%, 7%, 3%, 1%)
+- **Billing Dashboard** - Individual barrister financial views
+- **Cash Flow Analysis** - Accurate revenue attribution
 
-Correct mappings ensure:
-- Accurate billing data
-- Proper revenue attribution
-- Correct financial reporting
+## Accessing Xero Mappings
 
-## Viewing Mappings
+Navigate to **Admin** → **Financial** → **Xero Mappings**
 
-Access from **Admin** → **Integrations** → **Xero Mappings**
+<Info>
+This is currently a dedicated admin page. Future releases will integrate mapping directly into barrister profile pages.
+</Info>
 
-## Managing Mappings
+## Mapping Status
 
-### Auto-Mapping
-System attempts to match by:
-- Email address
-- Name matching
-- Company name
+Each barrister shows one of three states:
 
-### Manual Mapping
-For unmatched records:
-1. Select platform record
-2. Search Xero contacts
-3. Link manually
+| Status | Description |
+|--------|-------------|
+| Mapped | Linked to a Xero contact |
+| Unmapped | No Xero contact linked |
+| Multiple Matches | Several potential Xero contacts found |
 
-### Unmapped Records
-Review and resolve:
-- Records without Xero links
-- Multiple potential matches
-- Conflicts
+## Auto-Mapping
+
+The system attempts automatic matching by:
+
+1. **Email Address** - Exact match on primary email
+2. **Full Name** - Fuzzy matching on name fields
+3. **Known Aliases** - Alternative name configurations
+
+<Tip>
+Run auto-mapping after adding new barristers to quickly link obvious matches.
+</Tip>
+
+## Manual Mapping
+
+For unmatched or incorrectly matched barristers:
+
+<Steps>
+  <Step title="Find Barrister">
+    Locate the unmapped barrister in the list
+  </Step>
+  <Step title="Click Map">
+    Click the "Map" or "Edit Mapping" button
+  </Step>
+  <Step title="Search Xero">
+    Search for the correct Xero contact by name or email
+  </Step>
+  <Step title="Select Contact">
+    Choose the correct Xero contact from results
+  </Step>
+  <Step title="Confirm">
+    Save the mapping
+  </Step>
+</Steps>
+
+## Bulk Mapping
+
+For chambers with many barristers:
+
+1. Click "Bulk Auto-Map" to attempt matching all unmapped barristers
+2. Review suggested matches
+3. Confirm correct mappings
+4. Manually resolve remaining unmapped records
+
+## What Gets Synced
+
+Once mapped, the following Xero data is available:
+
+### Invoices
+- Invoice amounts and dates
+- Payment status
+- Invoice line items
+
+### Payments
+- Payment receipts
+- Payment dates
+- Outstanding amounts
+
+### Work Done Metrics
+- Total invoiced amounts by period
+- Work type breakdowns
+- Client revenue attribution
+
+## Contribution Tiers
+
+Mapped barristers automatically receive contribution tier assignments:
+
+| Tier | Contribution Rate | Criteria |
+|------|-------------------|----------|
+| Tier 1 | 14% | Highest revenue contributors |
+| Tier 2 | 7% | Strong contributors |
+| Tier 3 | 3% | Standard contributors |
+| Tier 4 | 1% | Developing contributors |
+
+<Warning>
+Unmapped barristers won't appear in financial reports or have contribution tiers calculated.
+</Warning>
 
 ## Troubleshooting
 
-Common issues:
-- Name variations between systems
-- Missing email addresses
-- Duplicate Xero contacts
+### Common Issues
+
+**Barrister not found in Xero**
+- Check spelling variations (e.g., "Chris" vs "Christopher")
+- Verify the Xero contact exists
+- Check if archived in Xero
+
+**Wrong contact linked**
+- Edit the mapping and search again
+- Use email address for more accurate matching
+
+**Financial data not showing**
+- Verify mapping is saved
+- Wait for next Xero sync (hourly)
+- Check Xero contact has invoices
+
+### Sync Status
+
+View last sync time at the top of the page. Manual sync can be triggered from **Admin** → **Integrations** → **Xero** → **Sync Now**
+
+## Related Pages
+
+- [Financial Dashboard](/management/financial-dashboard) - Overview of chambers finances
+- [Cash Reserves](/management/cash-reserves) - Cash position monitoring
+- [Integration Management](/management/integration-management) - Xero connection settings

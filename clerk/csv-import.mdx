@@ -1,62 +1,233 @@
 ---
-title: "CSV Import from Lex"
-description: "Importing contact data from Lex"
+title: "CSV Import"
+description: "Importing data from CSV files including Lex exports"
 ---
 
 <Note>
-Import historical data from Lex using CSV files.
+Import client, contact, and historical data from CSV files into the Chambers Platform.
 </Note>
 
 ## Overview
 
-The CSV import feature allows you to bring historical contact data from Lex into the Chambers Platform.
+The import system supports:
+
+- **Lex Exports** - Automatic field mapping for Lex practice management data
+- **Generic CSV** - Any CSV with manual field mapping
+- **Client Data** - Company and contact information
+- **Lead History** - Historical matter data
+
+## Accessing Import
+
+Navigate to **Clerk** → **Import** or **Admin** → **Data Import**
+
+## Supported Import Types
+
+| Type | Description | Auto-mapping |
+|------|-------------|--------------|
+| Lex Contacts | Contact export from Lex | Yes |
+| Lex Matters | Matter history from Lex | Yes |
+| Generic Clients | Any client CSV | Manual |
+| Generic Contacts | Any contact CSV | Manual |
 
 ## Preparing Your Data
 
-Export from Lex:
-1. Open Lex
-2. Navigate to Contacts
-3. Export as CSV
-4. Save the file
+### From Lex
+
+<Steps>
+  <Step title="Open Lex">
+    Launch your Lex practice management system
+  </Step>
+  <Step title="Navigate to Export">
+    Go to the section you want to export (Contacts, Matters, etc.)
+  </Step>
+  <Step title="Select Records">
+    Choose which records to include
+  </Step>
+  <Step title="Export as CSV">
+    Use the export function and save as CSV format
+  </Step>
+  <Step title="Save File">
+    Save to your computer for upload
+  </Step>
+</Steps>
+
+### From Other Systems
+
+Ensure your CSV includes:
+
+**Required columns:**
+- Name or Company Name
+- At least one identifier (email, phone, or reference)
+
+**Recommended columns:**
+- Email address
+- Phone number
+- Address
+- Category/Type
+- Notes
+
+<Tip>
+Use the first row for column headers. The system will use these to suggest field mappings.
+</Tip>
 
 ## Import Process
 
 <Steps>
-  <Step title="Navigate to Import">
-    Admin → Data Import → CSV Import
+  <Step title="Upload File">
+    Click "Upload CSV" and select your file
   </Step>
-  <Step title="Upload file">
-    Select your CSV file
+  <Step title="Select Import Type">
+    Choose the type of data you're importing
   </Step>
-  <Step title="Map fields">
-    Match Lex fields to platform fields
+  <Step title="Map Fields">
+    Match CSV columns to platform fields. Lex exports auto-map; others require manual mapping.
   </Step>
-  <Step title="Review">
-    Check the preview
+  <Step title="Configure Options">
+    Set duplicate handling and other options
+  </Step>
+  <Step title="Preview">
+    Review the first 10 records before importing
   </Step>
   <Step title="Import">
-    Confirm and run import
+    Click "Import" to process all records
   </Step>
 </Steps>
 
 ## Field Mapping
 
-Common mappings:
+### Lex Auto-Mapping
 
 | Lex Field | Platform Field |
 |-----------|----------------|
 | Company Name | Client Name |
-| Contact Name | Contact |
-| Email | Email |
-| Phone | Phone |
+| Contact Name | Contact Full Name |
+| Email | Primary Email |
+| Phone | Primary Phone |
+| Address | Address |
+| Category | Client Category |
+| Notes | Notes |
+| Matter Ref | Lead Reference |
+| Fee Earner | Assigned Barrister |
 
-## After Import
+### Manual Mapping
 
-Review imported records:
-- Check for duplicates
-- Verify data accuracy
-- Link to existing records if needed
+For non-Lex CSVs:
+
+1. Each CSV column is shown
+2. Select the matching platform field from dropdown
+3. Use "Skip" for columns you don't want to import
+4. Required fields must be mapped
+
+## Duplicate Handling
+
+Choose how to handle records that match existing data:
+
+| Option | Behaviour |
+|--------|-----------|
+| Skip Duplicates | Ignore matching records |
+| Update Existing | Merge new data into existing records |
+| Create New | Always create new records (may cause duplicates) |
+| Flag for Review | Import but mark for manual review |
+
+### Duplicate Detection
+
+Records are matched by:
+1. Email address (primary match)
+2. Company name + contact name
+3. Phone number
+4. Reference number (if provided)
+
+## Import Results
+
+After import completes:
+
+### Summary
+
+- Total records processed
+- Successfully imported
+- Skipped (duplicates)
+- Errors
+
+### Error Report
+
+Download a report of failed records with:
+- Row number
+- Error reason
+- Original data
 
 <Warning>
-Always backup your data before large imports.
+Fix errors in your CSV and re-import failed records separately.
 </Warning>
+
+## Post-Import Tasks
+
+After importing:
+
+<Steps>
+  <Step title="Review Imported Records">
+    Check a sample of imported data for accuracy
+  </Step>
+  <Step title="Resolve Duplicates">
+    Go to CRM → Duplicates to merge any detected duplicates
+  </Step>
+  <Step title="Link Relationships">
+    Connect imported contacts to clients if not auto-linked
+  </Step>
+  <Step title="Verify Mappings">
+    Check client-barrister relationships are correct
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+### Common Issues
+
+**File won't upload**
+- Check file is CSV format (not Excel .xlsx)
+- Ensure file size is under 10MB
+- Try saving with UTF-8 encoding
+
+**Fields not mapping correctly**
+- Check for extra spaces in headers
+- Ensure consistent date formats
+- Verify no special characters in headers
+
+**Too many duplicates**
+- Review duplicate detection settings
+- Consider cleaning data before import
+- Use "Flag for Review" option
+
+**Import errors**
+- Check required fields are populated
+- Verify email formats are valid
+- Ensure dates are in recognised format
+
+### Large Imports
+
+For imports over 1,000 records:
+
+- Import in batches of 500-1,000
+- Allow time between batches
+- Monitor system performance
+
+<Info>
+Large imports run in the background. You'll receive a notification when complete.
+</Info>
+
+## Import History
+
+View past imports at **Admin** → **Data Import** → **History**
+
+Each import shows:
+- Date and time
+- User who ran import
+- Record counts
+- Status (complete, partial, failed)
+- Download original file
+- Download error report
+
+## Related Pages
+
+- [CRM Overview](/clerk/crm-overview) - Managing imported clients
+- [Client Details](/clerk/client-details) - Working with client records
+- [Creating Leads](/clerk/creating-leads) - Creating leads from imported clients

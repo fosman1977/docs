@@ -272,8 +272,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/chambers-logo.png",
+    "dark": "/logo/chambers-logo.png"
   },
   "navbar": {
     "links": [

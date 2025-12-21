@@ -226,6 +226,19 @@
         ]
       },
       {
+        "tab": "Roadmap",
+        "groups": [
+          {
+            "group": "Product Roadmap",
+            "pages": [
+              "roadmap/index",
+              "roadmap/overview",
+              "roadmap/technical"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Help",
         "groups": [
           {

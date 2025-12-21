@@ -1,0 +1,775 @@
+---
+title: 'Technical Roadmap'
+description: 'Implementation details and architecture for upcoming CBIP features'
+---
+
+# Technical Roadmap
+
+Technical implementation details for developers building CBIP features.
+
+<Warning>
+  This documentation is for **developers only**. For user-facing roadmap information, see [Product Roadmap](/roadmap/overview).
+</Warning>
+
+---
+
+## Q1 2026: Ghost CMS Integration
+
+### Architecture Overview
+
+**Integration Pattern:** Daily sync via Ghost Content API + real-time attribution in CBIP
+
+**Technology Stack:**
+- Ghost CMS (hosted or self-hosted)
+- Ghost Content API v5
+- SvelteKit API routes for sync orchestration
+- PostgreSQL for content metadata storage
+- Existing CBIP leads infrastructure
+
+### Database Schema Changes
+
+**New Table: `ghost_posts`**
+
+```sql
+CREATE TABLE ghost_posts (
+  id TEXT PRIMARY KEY,              -- Ghost post UUID
+  slug TEXT UNIQUE NOT NULL,         -- URL-friendly slug
+  title TEXT NOT NULL,
+  excerpt TEXT,
+  html TEXT,                         -- Full HTML content
+  feature_image TEXT,                -- Header image URL
+  published_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  
+  -- Ghost metrics (synced daily)
+  view_count INT DEFAULT 0,
+  subscriber_count INT DEFAULT 0,
+  email_open_count INT DEFAULT 0,
+  email_click_count INT DEFAULT 0,
+  
+  -- Author attribution
+  author_ghost_id TEXT,
+  author_user_id UUID REFERENCES users(id),  -- Map to CBIP user
+  
+  -- Categorisation
+  primary_tag TEXT,                  -- Practice area tag
+  tags JSONB,                        -- All Ghost tags
+  
+  -- Sync metadata
+  last_synced_at TIMESTAMP DEFAULT NOW(),
+  sync_status TEXT CHECK (sync_status IN ('synced', 'pending', 'error')),
+  
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_ghost_posts_published ON ghost_posts(published_at DESC);
+CREATE INDEX idx_ghost_posts_author ON ghost_posts(author_user_id);
+CREATE INDEX idx_ghost_posts_tags ON ghost_posts USING GIN(tags);
+```
+
+**Modification: `leads` table**
+
+```sql
+ALTER TABLE leads 
+ADD COLUMN ghost_post_id TEXT REFERENCES ghost_posts(id),
+ADD COLUMN ghost_post_url TEXT;
+
+CREATE INDEX idx_leads_ghost_post ON leads(ghost_post_id);
+```
+
+**Update Existing Constraint:**
+
+```sql
+-- Modify existing source constraint to keep 'website' for Ghost content
+-- No change needed - 'website' already allowed
+-- Use marketing_source = 'Ghost' for attribution
+```
+
+### API Endpoints
+
+#### Ghost Sync Service
+
+**Endpoint:** `POST /api/ghost/sync`  
+**Auth:** API key or admin-only  
+**Purpose:** Trigger manual sync of Ghost content
+
+**Request:**
+```typescript
+{
+  full_sync?: boolean,  // Default: false (incremental)
+  post_ids?: string[]   // Optional: sync specific posts only
+}
+```
+
+**Response:**
+```typescript
+{
+  synced: number,
+  created: number,
+  updated: number,
+  errors: Array<{post_id: string, error: string}>
+}
+```
+
+**Implementation:**
+```typescript
+// /src/routes/api/ghost/sync/+server.ts
+import { Ghost } from '@tryghost/content-api';
+
+export async function POST({ request, locals }) {
+  // Auth check
+  if (!locals.user?.isAdmin) throw error(403);
+  
+  const { full_sync = false, post_ids } = await request.json();
+  
+  const ghost = new Ghost({
+    url: env.GHOST_URL,
+    key: env.GHOST_CONTENT_API_KEY,
+    version: 'v5.0'
+  });
+  
+  // Fetch posts
+  const posts = await ghost.posts.browse({
+    limit: 'all',
+    include: 'tags,authors',
+    filter: post_ids ? `id:[${post_ids.join(',')}]` : undefined
+  });
+  
+  // Upsert to database
+  for (const post of posts) {
+    await db.ghost_posts.upsert({
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      // ... map all fields
+      last_synced_at: new Date()
+    });
+  }
+  
+  return json({ synced: posts.length, ... });
+}
+```
+
+#### Get Posts for Attribution
+
+**Endpoint:** `GET /api/ghost/posts`  
+**Auth:** Authenticated users  
+**Purpose:** List posts for lead attribution dropdown
+
+**Query Params:**
+- `search`: Text search in title/excerpt
+- `limit`: Number of results (default: 20)
+- `author_id`: Filter by CBIP user ID
+
+**Response:**
+```typescript
+{
+  posts: Array<{
+    id: string,
+    title: string,
+    slug: string,
+    published_at: string,
+    author_name: string,
+    view_count: number,
+    url: string  // Full Ghost URL
+  }>,
+  total: number
+}
+```
+
+#### Content Performance Dashboard
+
+**Endpoint:** `GET /api/ghost/analytics`  
+**Auth:** Management role  
+**Purpose:** Content ROI metrics
+
+**Response:**
+```typescript
+{
+  top_posts: Array<{
+    id: string,
+    title: string,
+    views: number,
+    leads_generated: number,
+    revenue_attributed: number,
+    conversion_rate: number  // leads / views
+  }>,
+  author_performance: Array<{
+    author_id: string,
+    author_name: string,
+    posts_published: number,
+    total_views: number,
+    total_leads: number,
+    avg_conversion_rate: number
+  }>,
+  practice_area_performance: Array<{
+    practice_area: string,
+    posts_count: number,
+    leads_generated: number,
+    revenue_attributed: number
+  }>
+}
+```
+
+### Cron Job: Daily Sync
+
+**Implementation:** Vercel Cron or server-based scheduler
+
+**Schedule:** Daily at 2:00 AM UTC (after Xero sync at 1:00 AM)
+
+**Job:**
+```typescript
+// /src/routes/api/cron/ghost-sync/+server.ts
+export async function GET({ request }) {
+  // Verify cron secret
+  if (request.headers.get('Authorization') !== `Bearer ${env.CRON_SECRET}`) {
+    throw error(401);
+  }
+  
+  // Trigger incremental sync
+  await syncGhostPosts({ full_sync: false });
+  
+  return json({ success: true });
+}
+```
+
+**Vercel Configuration:**
+```json
+// vercel.json
+{
+  "crons": [{
+    "path": "/api/cron/ghost-sync",
+    "schedule": "0 2 * * *"
+  }]
+}
+```
+
+### UI Components
+
+#### Attribution Dropdown
+
+**Component:** `/src/lib/components/GhostPostSelect.svelte`
+
+**Props:**
+```typescript
+export let value: string | null = null;  // Selected ghost_post_id
+export let disabled = false;
+export let placeholder = 'Search Ghost posts...';
+```
+
+**Features:**
+- Async search with debouncing
+- Shows post title, date, author
+- Preview link to Ghost post
+- Auto-complete from synced posts
+
+#### Content ROI Dashboard
+
+**Page:** `/src/routes/(app)/management/content-analytics/+page.svelte`
+
+**Sections:**
+1. Top Performing Posts (table)
+2. Author Leaderboard (cards)
+3. Practice Area Performance (charts)
+4. Time-Series Trends (line chart)
+
+**Data Loading:**
+```typescript
+// +page.server.ts
+export async function load({ locals }) {
+  const analytics = await fetch('/api/ghost/analytics');
+  return { analytics };
+}
+```
+
+### Environment Variables
+
+**Required:**
+```bash
+# .env
+GHOST_URL=https://insights.33chancerylane.com
+GHOST_CONTENT_API_KEY=your_content_api_key_here
+GHOST_ADMIN_API_KEY=your_admin_api_key_here  # Optional for auto-publish
+```
+
+**Deployment:**
+- Add to Vercel environment variables
+- Encrypt in production
+- Document in `.env.example`
+
+### Testing Strategy
+
+**Unit Tests:**
+- Ghost API client wrapper
+- Post data transformation
+- Attribution logic
+
+**Integration Tests:**
+- Mock Ghost API responses
+- Test full sync flow
+- Verify database constraints
+
+**E2E Tests:**
+- Lead creation with Ghost attribution
+- Content dashboard rendering
+- Search/filter functionality
+
+### Migration Path
+
+**Step 1:** Database migrations (safe, no data changes)
+
+**Step 2:** Deploy API endpoints (no UI changes yet)
+
+**Step 3:** Run initial full sync manually
+
+**Step 4:** Deploy UI components with feature flag
+
+**Step 5:** Enable cron job
+
+**Step 6:** Remove feature flag, announce to users
+
+**Rollback Plan:** Feature flag OFF, cron disabled, no database rollback needed
+
+### Estimated Effort
+
+- Database setup: 1 hour
+- Ghost API integration: 4 hours
+- API endpoints: 3 hours
+- Cron job setup: 1 hour
+- UI components: 3 hours
+- Testing & QA: 2 hours
+
+**Total:** ~14 hours development time
+
+---
+
+## Q1-Q2 2026: Aged Debt Intelligence
+
+### Architecture Overview
+
+**Pattern:** Clerk decision support system with knowledge capture and management visibility
+
+**Dependencies:**
+- ⚠️ **Policy Definition Required:** Chambers must define aged debt policies before technical build
+- Existing `aged_debt_*` tables
+- Existing `payment_records` table
+- Existing Teams webhook integration
+- Existing user roles/permissions
+
+### Database Schema Changes
+
+**New Table: `aged_debt_policies`**
+
+```sql
+CREATE TABLE aged_debt_policies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- Write-off thresholds
+  auto_writeoff_threshold_amount DECIMAL(12,2),  -- e.g., £500
+  auto_writeoff_age_days INT,                     -- e.g., 365 days
+  
+  -- Collection cost tolerance
+  min_collection_roi DECIMAL(5,2),                -- e.g., 0.40 (40% ROI)
+  
+  -- Approval workflows
+  clerk_writeoff_limit DECIMAL(12,2),             -- Max clerks can write off
+  management_approval_threshold DECIMAL(12,2),    -- Above this needs management
+  
+  -- Client relationship tiers
+  relationship_tiers JSONB,  -- { "tier1": [...], "tier2": [...] }
+  
+  -- Active policy
+  active BOOLEAN DEFAULT false,
+  effective_from DATE,
+  created_by UUID REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Only one active policy at a time
+CREATE UNIQUE INDEX idx_active_policy 
+ON aged_debt_policies(active) WHERE active = true;
+```
+
+**New Table: `aged_debt_actions`**
+
+```sql
+CREATE TABLE aged_debt_actions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  aged_debt_case_id UUID REFERENCES aged_debt_cases(id),
+  
+  -- Action details
+  action_type TEXT CHECK (action_type IN (
+    'chase_hard', 'chase_gentle', 'wait_monitor', 
+    'escalate_barrister', 'escalate_management',
+    'mark_unrecoverable', 'write_off', 'refer_collections'
+  )),
+  
+  action_date DATE DEFAULT CURRENT_DATE,
+  
+  -- Knowledge capture
+  reasoning TEXT,  -- Why clerk took this action
+  client_relationship_flag BOOLEAN DEFAULT false,
+  
+  -- Outcome tracking
+  outcome TEXT CHECK (outcome IN (
+    'pending', 'payment_received', 'partial_payment',
+    'no_response', 'promise_to_pay', 'dispute_raised'
+  )),
+  outcome_date DATE,
+  outcome_notes TEXT,
+  
+  -- Actor
+  actioned_by UUID REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_debt_actions_case ON aged_debt_actions(aged_debt_case_id);
+CREATE INDEX idx_debt_actions_date ON aged_debt_actions(action_date DESC);
+```
+
+**New Table: `aged_debt_classifications`**
+
+```sql
+CREATE TABLE aged_debt_classifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  aged_debt_case_id UUID REFERENCES aged_debt_cases(id),
+  
+  -- Classification
+  status TEXT CHECK (status IN (
+    'chase_hard', 'wait_monitor', 'probably_lost', 'write_off'
+  )),
+  
+  confidence TEXT CHECK (confidence IN ('certain', 'probable', 'possible')),
+  
+  -- Who classified
+  classified_by UUID REFERENCES users(id),
+  classification_date DATE DEFAULT CURRENT_DATE,
+  
+  -- Pattern matching (for training new clerks)
+  similar_debts_resolved INT,  -- How many similar debts in history
+  historical_recovery_rate DECIMAL(5,2),  -- % recovered for similar debts
+  
+  notes TEXT,
+  
+  -- Audit
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_debt_classification_case 
+ON aged_debt_classifications(aged_debt_case_id);
+
+CREATE INDEX idx_debt_classification_status 
+ON aged_debt_classifications(status);
+```
+
+**New View: `aged_debt_clerk_workload`**
+
+```sql
+CREATE VIEW aged_debt_clerk_workload AS
+SELECT 
+  u.id as clerk_id,
+  u.full_name as clerk_name,
+  COUNT(DISTINCT adc.id) as total_debts_managed,
+  SUM(adc.outstanding_amount) as total_amount_managed,
+  COUNT(DISTINCT CASE WHEN adcl.status = 'chase_hard' THEN adc.id END) as high_priority_count,
+  AVG(EXTRACT(DAY FROM NOW() - adc.created_at)) as avg_debt_age_days
+FROM users u
+LEFT JOIN aged_debt_cases adc ON adc.assigned_clerk_id = u.id
+LEFT JOIN aged_debt_classifications adcl ON adcl.aged_debt_case_id = adc.id
+WHERE u.role = 'clerk'
+GROUP BY u.id, u.full_name;
+```
+
+### API Endpoints
+
+#### Daily Priority List
+
+**Endpoint:** `GET /api/aged-debt/priority-list`  
+**Auth:** Clerk role  
+**Purpose:** Get today's top priority debts to action
+
+**Query Params:**
+- `clerk_id`: UUID (optional, defaults to current user)
+- `limit`: number (default: 10)
+
+**Response:**
+```typescript
+{
+  priority_debts: Array<{
+    debt_id: string,
+    client_name: string,
+    barrister_name: string,
+    amount: number,
+    age_days: number,
+    current_classification: 'chase_hard' | 'wait_monitor' | etc,
+    last_action: string,
+    last_action_date: string,
+    recommended_action: 'chase' | 'escalate' | 'wait',
+    priority_score: number  // 0-100
+  }>
+}
+```
+
+**Priority Algorithm:**
+```typescript
+priority_score = 
+  (amount / 1000) * 0.3 +           // Larger debts weighted higher
+  (age_days / 30) * 0.3 +            // Older debts weighted higher
+  (days_since_last_action / 7) * 0.2 + // Stale debts need attention
+  (client_tier_multiplier) * 0.2;     // Important clients flagged
+```
+
+#### Record Action
+
+**Endpoint:** `POST /api/aged-debt/actions`  
+**Auth:** Clerk role  
+**Purpose:** Log an action taken on aged debt
+
+**Request:**
+```typescript
+{
+  aged_debt_case_id: string,
+  action_type: 'chase_hard' | 'chase_gentle' | 'wait_monitor' | ...,
+  reasoning: string,
+  client_relationship_flag?: boolean
+}
+```
+
+**Response:**
+```typescript
+{
+  action_id: string,
+  updated_classification: string,
+  next_recommended_action_date: string
+}
+```
+
+#### Classify Debt
+
+**Endpoint:** `POST /api/aged-debt/classify`  
+**Auth:** Clerk role  
+**Purpose:** Set classification for aged debt
+
+**Request:**
+```typescript
+{
+  aged_debt_case_id: string,
+  status: 'chase_hard' | 'wait_monitor' | 'probably_lost' | 'write_off',
+  confidence: 'certain' | 'probable' | 'possible',
+  notes: string
+}
+```
+
+**Side Effects:**
+- If status = 'write_off' and amount > clerk_writeoff_limit:
+  - Create approval request for management
+  - Send Teams notification
+  - Mark as 'pending_approval'
+
+#### Management Dashboard
+
+**Endpoint:** `GET /api/aged-debt/management-dashboard`  
+**Auth:** Management role  
+**Purpose:** Executive overview of aged debt
+
+**Response:**
+```typescript
+{
+  summary: {
+    total_outstanding: number,
+    realistic_to_recover: number,
+    probably_lost: number,
+    pending_writeoff_approval: number
+  },
+  clerk_workload: Array<{
+    clerk_name: string,
+    debts_managed: number,
+    amount_managed: number,
+    high_priority_count: number
+  }>,
+  collection_rate_trend: Array<{
+    month: string,
+    target_rate: number,
+    actual_rate: number
+  }>,
+  pending_approvals: Array<{
+    debt_id: string,
+    amount: number,
+    clerk_name: string,
+    reasoning: string,
+    requested_date: string
+  }>
+}
+```
+
+### UI Components
+
+#### Priority Action List
+
+**Component:** `/src/lib/components/AgedDebtPriorityList.svelte`
+
+**Features:**
+- Morning dashboard widget for clerks
+- Top 10 debts requiring action today
+- Quick-action buttons: Chase / Escalate / Mark Lost
+- Click to see full debt details
+
+#### Debt Classification Modal
+
+**Component:** `/src/lib/components/DebtClassificationModal.svelte`
+
+**Fields:**
+- Status dropdown (chase_hard, wait_monitor, etc.)
+- Confidence dropdown
+- Reasoning textarea (required for probably_lost or write_off)
+- Client relationship flag checkbox
+
+**Validation:**
+- Write-off requires reasoning (min 50 chars)
+- Triggers approval workflow if over limit
+
+#### Management Dashboard
+
+**Page:** `/src/routes/(app)/management/aged-debt/+page.svelte`
+
+**Sections:**
+1. Summary Cards (total, recoverable, lost, pending approval)
+2. Clerk Workload Table
+3. Collection Rate Trends (chart)
+4. Pending Approvals (action required)
+
+### Teams Integration
+
+**Notification Triggers:**
+
+1. **Write-off Approval Request**
+   - When: Clerk requests write-off > their limit
+   - To: Management channel
+   - Message: "£X write-off pending approval from [Clerk Name]. Reason: [reasoning]"
+
+2. **High-Priority Debt Stale**
+   - When: chase_hard debt has no action in 7 days
+   - To: Clerk + Management
+   - Message: "Debt £X ([Client]) marked chase_hard but no action in 7 days"
+
+3. **Collection Rate Alert**
+   - When: Monthly collection rate < 70% of target
+   - To: Management channel
+   - Message: "Collection rate this month: X% (target: Y%)"
+
+**Implementation:**
+```typescript
+// Use existing Teams webhook from CBIP
+await sendTeamsNotification({
+  channel: 'management',
+  title: 'Write-off Approval Required',
+  body: `Clerk ${clerk.name} requests approval to write off £${amount}`,
+  actions: [
+    { label: 'Approve', url: `/aged-debt/approvals/${id}` },
+    { label: 'Reject', url: `/aged-debt/approvals/${id}?action=reject` }
+  ]
+});
+```
+
+### Migration Path
+
+**Phase 1: Policy Definition** (Non-technical, 2-4 weeks)
+- Workshop with senior clerks + management
+- Define write-off thresholds, approval limits
+- Document collection processes
+- Populate `aged_debt_policies` table
+
+**Phase 2: Database & API** (1 week)
+- Run migrations
+- Deploy API endpoints
+- Test with sample data
+
+**Phase 3: UI Components** (1 week)
+- Build classification modal
+- Build priority list widget
+- Build management dashboard
+
+**Phase 4: Pilot** (2 weeks)
+- 2 clerks test system
+- Gather feedback, iterate
+- Train remaining clerks
+
+**Phase 5: Full Rollout** (1 week)
+- Enable for all clerks
+- Teams notifications active
+- Monitor usage
+
+### Estimated Effort
+
+**Technical Build:**
+- Database migrations: 2 hours
+- API endpoints: 8 hours
+- Priority algorithm: 3 hours
+- UI components: 10 hours
+- Teams integration: 2 hours
+- Testing & QA: 5 hours
+
+**Total:** ~30 hours development time
+
+**Non-Technical Work:**
+- Policy workshops: 8-16 hours (chambers leadership)
+- Clerk training: 4 hours
+- Documentation: 4 hours
+
+**Total Project:** 6-8 weeks (including policy definition)
+
+---
+
+## Q3 2026: Multi-Jurisdiction Framework
+
+### Architecture Overview
+
+**Pattern:** Plugin-based jurisdiction modules with shared core
+
+**Technology Stack:**
+- Jurisdiction registry (JSON config files)
+- Holiday/court calendar APIs
+- Multi-currency exchange rate service
+- Time zone handling (Luxon.js or similar)
+
+### Database Schema (High-Level)
+
+**Tables Needed:**
+- `jurisdiction_configs` - Settings per jurisdiction
+- `jurisdiction_holidays` - Court holidays, non-working days
+- `matter_jurisdictions` - Link matters to jurisdictions
+- `jurisdiction_deadlines` - Calculated deadlines with local rules
+
+**Detail:** Specification to be completed Q2 2026
+
+---
+
+## Development Principles
+
+**All CBIP development follows:**
+
+1. **Incremental Delivery:** Ship working features in 2-4 week sprints
+2. **Existing Infrastructure:** Build on what exists (tables, integrations, patterns)
+3. **User Validation:** Pilot with 2-3 users before full rollout
+4. **Documentation First:** Write specs before code
+5. **Backwards Compatible:** Never break existing workflows
+
+---
+
+## Questions & Feedback
+
+**For developers:**
+- Technical questions: [dev@chambers.com](mailto:dev@chambers.com)
+- Architecture review: Schedule with tech lead
+- API documentation: See `/developers` section
+
+**For product:**
+- Feature clarification: [product@chambers.com](mailto:product@chambers.com)
+- User research: Coordinate with pilot users
+
+---
+
+<Note>
+  **Development Environment:** All features built in development branch, tested in staging, deployed to production with feature flags for controlled rollout.
+</Note>

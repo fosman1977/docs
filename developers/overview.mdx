@@ -14,7 +14,6 @@ graph LR
     subgraph "Chambers Platform"
         API[API Layer]
         Services[Service Layer]
-        Cache[(Redis Cache)]
         DB[(Supabase)]
         WS[WebSocket]
     end
@@ -46,7 +45,6 @@ graph LR
     Services --> Claude
     Services --> OpenAI
     Services --> Sentry
-    Services --> Cache
     Services --> DB
     WS --> Services
 ```
@@ -61,7 +59,6 @@ graph LR
 | [AI (Claude & OpenAI)](/developers/integrations/ai) | AI insights, Suggestions | API Keys | Request/Response |
 | [Sentry](/developers/integrations/sentry) | Error monitoring | DSN | Outbound |
 | [Real-time (Socket.io)](/developers/integrations/realtime) | Live updates, Billing, Messaging | WebSocket | Bidirectional |
-| [Caching (Redis)](/developers/integrations/caching) | Performance | REST API | Internal |
 
 ## Package Versions
 
@@ -75,8 +72,6 @@ Key integration packages used in the platform:
 | `@sentry/sveltekit` | 10.30.0 | Sentry |
 | `@google-analytics/data` | 4.2.0 | Google Analytics |
 | `socket.io` | 4.7.x | Real-time |
-| `@upstash/redis` | 1.x | Redis caching |
-| `@upstash/ratelimit` | 1.x | Rate limiting |
 
 ## Common Patterns
 
@@ -139,10 +134,6 @@ OPENAI_API_KEY=your_openai_key        # For Lead Suggestions
 # Sentry
 SENTRY_DSN=your_dsn
 VITE_SENTRY_DSN=your_public_dsn
-
-# Redis (Upstash)
-UPSTASH_REDIS_REST_URL=your_url
-UPSTASH_REDIS_REST_TOKEN=your_token
 ```
 
 ## Integration Status

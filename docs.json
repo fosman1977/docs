@@ -69,6 +69,12 @@
             ]
           },
           {
+            "group": "Communication",
+            "pages": [
+              "barrister/messages"
+            ]
+          },
+          {
             "group": "Settings",
             "pages": [
               "barrister/managing-profile"
@@ -291,8 +297,7 @@
               "developers/integrations/google-analytics",
               "developers/integrations/ai",
               "developers/integrations/sentry",
-              "developers/integrations/realtime",
-              "developers/integrations/caching"
+              "developers/integrations/realtime"
             ]
           }
         ]

@@ -61,6 +61,7 @@
             "group": "Performance",
             "pages": [
               "barrister/utilisation-tracking",
+              "barrister/time-entry",
               "barrister/billing-dashboard",
               "barrister/performance-metrics",
               "barrister/engagement-score",
@@ -70,8 +71,7 @@
           {
             "group": "Settings",
             "pages": [
-              "barrister/managing-profile",
-              "barrister/calendar-integration"
+              "barrister/managing-profile"
             ]
           }
         ]
@@ -143,6 +143,13 @@
             ]
           },
           {
+            "group": "Communication",
+            "pages": [
+              "clerk/messaging",
+              "clerk/messaging-hub"
+            ]
+          },
+          {
             "group": "Settings",
             "pages": [
               "clerk/settings",
@@ -203,7 +210,6 @@
           {
             "group": "Operations",
             "pages": [
-              "management/calendar-management",
               "management/follow-up-oversight",
               "management/global-search",
               "management/report-management",

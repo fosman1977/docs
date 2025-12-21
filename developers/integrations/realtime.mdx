@@ -3,9 +3,7 @@ title: "Real-Time Updates (Socket.io)"
 description: "WebSocket-based real-time communication for live updates"
 ---
 
-# Real-Time Updates (Socket.io)
-
-The Chambers Platform uses Socket.io for real-time bidirectional communication, enabling instant updates for lead assignments, opportunity changes, and conflict alerts.
+The Chambers Platform uses Socket.io for real-time bidirectional communication, enabling instant updates for lead assignments, opportunity changes, conflict alerts, billing time entries, and messaging broadcasts.
 
 ## Overview
 
@@ -42,6 +40,8 @@ graph TB
         LeadEvents[Lead Events]
         OpportunityEvents[Opportunity Events]
         ConflictEvents[Conflict Events]
+        BillingEvents[Billing Events]
+        MessageEvents[Message Events]
     end
 
     Browser --> SocketClient
@@ -51,6 +51,8 @@ graph TB
     Instance --> LeadEvents
     Instance --> OpportunityEvents
     Instance --> ConflictEvents
+    Instance --> BillingEvents
+    Instance --> MessageEvents
 ```
 
 ## Service Files
@@ -89,6 +91,22 @@ graph TB
 |-------|-----------|-------------|
 | `conflict:detected` | Server → Client | Multiple acceptances detected |
 | `conflict:resolved` | Server → Client | Conflict resolved by clerk |
+
+### Time Entry Events
+
+| Event | Direction | Description |
+|-------|-----------|-------------|
+| `billing:entry:submitted` | Server → Client | Barrister submitted time entry |
+| `billing:entry:approved` | Server → Client | Clerk approved time entry |
+| `billing:entry:invoiced` | Server → Client | Entry included on invoice |
+
+### Messaging Hub Events
+
+| Event | Direction | Description |
+|-------|-----------|-------------|
+| `message:broadcast` | Server → Client | Chambers-wide message sent |
+| `message:poll:vote` | Server → Client | Poll vote received |
+| `message:read` | Client → Server | Message marked as read |
 
 ### System Events
 

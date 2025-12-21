@@ -3,8 +3,6 @@ title: "Redis Caching"
 description: "Distributed caching with Redis for performance optimization"
 ---
 
-# Redis Caching
-
 The Chambers Platform uses Redis for distributed caching to improve performance and reduce database load.
 
 ## Overview
@@ -29,7 +27,7 @@ User sessions are stored in Redis for:
 Frequently accessed data is cached:
 - AI insights (24 hour TTL)
 - Dashboard statistics (5 minute TTL)
-- Barrister availability (30 minute TTL)
+- Barrister utilisation (30 minute TTL)
 
 ### Rate Limiting
 
@@ -89,7 +87,7 @@ export async function cacheDelete(key: string): Promise<void> {
 | `session:{id}` | `session:abc123` | User sessions |
 | `insights:{year}` | `insights:2024` | Cached AI insights |
 | `stats:{type}:{period}` | `stats:leads:daily` | Dashboard statistics |
-| `availability:{id}` | `availability:user123` | Barrister availability |
+| `utilisation:{id}` | `utilisation:user123` | Barrister utilisation |
 | `rate:{endpoint}:{id}` | `rate:/api/ai:user123` | Rate limiting counters |
 
 ## Cache Strategies
@@ -129,7 +127,7 @@ async function updateBarristerProfile(barristerId: string, data: any) {
 
   // Invalidate cache
   await cacheDelete(`stats:barrister:${barristerId}`);
-  await cacheDelete(`availability:${barristerId}`);
+  await cacheDelete(`utilisation:${barristerId}`);
 }
 ```
 
@@ -155,7 +153,7 @@ async function warmCache() {
 | Sessions | 24 hours | Security balance |
 | AI Insights | 24 hours | Expensive to regenerate |
 | Dashboard stats | 5 minutes | Balance freshness vs load |
-| Availability | 30 minutes | Availability data updates |
+| Utilisation | 30 minutes | Workload data updates |
 | Rate limit counters | 1 minute | Rolling window |
 
 ## Rate Limiting

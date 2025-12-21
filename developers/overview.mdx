@@ -23,8 +23,7 @@ graph LR
         Xero[Xero]
     end
 
-    subgraph "Calendar & Comms"
-        MSGraph[Microsoft Graph]
+    subgraph "Communications"
         Teams[Microsoft Teams]
     end
 
@@ -42,7 +41,6 @@ graph LR
     end
 
     Services --> Xero
-    Services --> MSGraph
     Services --> Teams
     Services --> GA4
     Services --> Claude
@@ -58,12 +56,11 @@ graph LR
 | Integration | Purpose | Auth Method | Sync Direction |
 |-------------|---------|-------------|----------------|
 | [Xero](/developers/integrations/xero) | Financial data, Invoices | OAuth 2.0 | One-way (from Xero) |
-| [Microsoft Graph](/developers/integrations/microsoft-graph) | Calendar, Availability | OAuth 2.0 | One-way (from M365) |
 | [Microsoft Teams](/developers/integrations/microsoft-teams) | Notifications, Alerts | Webhook | Outbound |
 | [Google Analytics](/developers/integrations/google-analytics) | Website analytics | Service Account | One-way (from GA) |
 | [AI (Claude & OpenAI)](/developers/integrations/ai) | AI insights, Suggestions | API Keys | Request/Response |
 | [Sentry](/developers/integrations/sentry) | Error monitoring | DSN | Outbound |
-| [Real-time (Socket.io)](/developers/integrations/realtime) | Live updates | WebSocket | Bidirectional |
+| [Real-time (Socket.io)](/developers/integrations/realtime) | Live updates, Billing, Messaging | WebSocket | Bidirectional |
 | [Caching (Redis)](/developers/integrations/caching) | Performance | REST API | Internal |
 
 ## Package Versions
@@ -73,7 +70,6 @@ Key integration packages used in the platform:
 | Package | Version | Integration |
 |---------|---------|-------------|
 | `xero-node` | 13.3.0 | Xero |
-| `@microsoft/microsoft-graph-client` | 3.x | Microsoft Graph |
 | `@anthropic-ai/sdk` | 0.71.0 | Claude AI |
 | `openai` | 4.24.7 | OpenAI |
 | `@sentry/sveltekit` | 10.30.0 | Sentry |
@@ -126,11 +122,6 @@ XERO_CLIENT_ID=your_client_id
 XERO_CLIENT_SECRET=your_client_secret
 XERO_REDIRECT_URI=your_redirect_uri
 
-# Microsoft Graph
-MS_GRAPH_CLIENT_ID=your_client_id
-MS_GRAPH_CLIENT_SECRET=your_client_secret
-MS_GRAPH_TENANT_ID=your_tenant_id
-
 # Microsoft Teams (optional)
 TEAMS_WEBHOOK_URL=your_webhook_url
 TEAMS_NOTIFICATIONS_ENABLED=true
@@ -180,7 +171,6 @@ Automatic syncs run on schedule:
 | Integration | Schedule | Type |
 |-------------|----------|------|
 | Xero | Daily at 2am | Full |
-| Calendar | Every 30 minutes | Incremental |
 | Analytics | Daily at 3am | Full |
 
 ## API Endpoints Summary
@@ -208,6 +198,23 @@ Automatic syncs run on schedule:
 | Endpoint | Protocol | Purpose |
 |----------|----------|---------|
 | `/api/socket` | WebSocket | Real-time events |
+
+### Billing Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/billing/time-entries` | GET | List time entries |
+| `/api/billing/time-entries` | POST | Create time entry |
+| `/api/billing/time-entries/[id]` | PUT | Update time entry |
+| `/api/billing/time-entries/[id]/approve` | POST | Approve entry (clerk) |
+
+### Messaging Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/messages/broadcast` | POST | Send chambers-wide message |
+| `/api/messages/broadcast/[id]` | GET | Get broadcast details |
+| `/api/messages/polls/[id]/vote` | POST | Submit poll vote |
 
 ## Security Considerations
 

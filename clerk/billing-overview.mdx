@@ -1,27 +1,79 @@
 ---
 title: "Billing Overview"
-description: "Viewing billing information for barristers"
+description: "Managing billing, time entries, and financial information"
 ---
 
 <Note>
-Access billing and financial information for your barristers.
+Access billing and financial information for your barristers, including real-time time entry processing.
 </Note>
 
-## Billing Access
+## Real-Time Time Entries
 
-Clerks can view billing data for barristers they manage:
-- Year-to-date fees
-- Outstanding invoices
-- Target progress
+One of the platform's most powerful features is automatic time entry sync. When barristers log their billable time, you receive it instantly.
 
-## Key Metrics
+### How It Works
+
+1. **Barrister logs time** - They record hours worked on a matter
+2. **Instant notification** - You receive a real-time alert
+3. **Review & approve** - Check the entry details and approve
+4. **Process invoice** - Include approved entries on client invoices
+
+<Info>
+Time entries appear on your dashboard within seconds of submission, eliminating the traditional delays in billing workflows.
+</Info>
+
+### Pending Entries
+
+View all pending time entries at **Billing** → **Time Entries**:
+
+| Column | Description |
+|--------|-------------|
+| Barrister | Who submitted the entry |
+| Matter | Case or client reference |
+| Date | When work was performed |
+| Hours | Duration logged |
+| Amount | Calculated fee |
+| Status | Submitted, Approved, or Invoiced |
+
+### Processing Entries
+
+<Steps>
+  <Step title="Review pending entries">
+    Check the time entry queue for new submissions
+  </Step>
+  <Step title="Verify details">
+    Confirm matter, hours, and description are accurate
+  </Step>
+  <Step title="Approve entry">
+    Click "Approve" to confirm the entry
+  </Step>
+  <Step title="Add to invoice">
+    Include approved entries when creating invoices
+  </Step>
+</Steps>
+
+<Tip>
+Enable desktop notifications to be alerted immediately when barristers submit time entries.
+</Tip>
+
+## Billing Dashboard
+
+### Key Metrics
 
 | Metric | Description |
 |--------|-------------|
 | Gross Fees | Total invoiced |
 | Collected | Payments received |
 | Outstanding | Unpaid invoices |
-| Pipeline | Estimated future fees |
+| Pipeline | Estimated future fees from pending entries |
+
+### Barrister Billing Access
+
+View billing data for barristers you manage:
+- Year-to-date fees
+- Outstanding invoices
+- Target progress
+- Pending time entries
 
 ## Data Source
 
@@ -30,12 +82,15 @@ Financial data syncs from Xero:
 - Aged debt
 - Client accounts
 
+Time entry data originates in the platform and syncs to Xero upon invoicing.
+
 ## Reports
 
 Generate billing reports for:
 - Individual barristers
 - Team overview
 - Period comparisons
+- Time entry summaries
 
 <Info>
 Some financial details may be restricted to management users only.

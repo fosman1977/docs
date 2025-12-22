@@ -1,0 +1,219 @@
+---
+title: "Tasks"
+description: "Managing strategic and operational tasks for chambers management"
+---
+
+<Note>
+The Tasks feature provides management with a dedicated workspace to track strategic initiatives, operational items, and oversight responsibilities. Fully responsive for mobile and tablet use.
+</Note>
+
+## Overview
+
+The Tasks page provides a centralised task management system for management-level work. Use it to track strategic initiatives, cross-team projects, and high-level operational items that don't fit within the clerk-focused workflow.
+
+Management has **read-only access** to clerk tasks for oversight purposes, while maintaining a separate task board for management-specific work.
+
+## Accessing Tasks
+
+Navigate to **Tasks** from the management sidebar. The interface is fully responsive and works seamlessly on desktop, tablet, and mobile devices.
+
+## Views
+
+### List View
+
+The default view displays tasks in a compact list with quick-filter tabs:
+
+<CardGroup cols={5}>
+  <Card title="All" icon="list">
+    All active management tasks
+  </Card>
+  <Card title="My Tasks" icon="user">
+    Tasks assigned to you
+  </Card>
+  <Card title="Today" icon="calendar">
+    Tasks due today
+  </Card>
+  <Card title="Overdue" icon="triangle-exclamation">
+    Past-due items requiring attention
+  </Card>
+  <Card title="Completed" icon="circle-check">
+    Finished tasks for reference
+  </Card>
+</CardGroup>
+
+### Kanban View
+
+Toggle to Kanban view for a visual workflow with three columns:
+
+- **To Do** - Items not yet started
+- **In Progress** - Active work items
+- **Completed** - Finished tasks
+
+Drag and drop tasks between columns to update status instantly. On mobile, the columns stack vertically for easy scrolling.
+
+## Creating Tasks
+
+Click **New Task** to open the creation modal.
+
+### Task Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| Title | Yes | Clear description of the task |
+| Description | No | Detailed information and context |
+| Priority | No | Low, Medium, High, or Urgent |
+| Category | No | Operations, Case Related, Administrative, or Personal |
+| Due Date | No | Target completion date |
+| Assign To | No | Delegate to a team member |
+| Link to Lead | No | Associate with an existing lead |
+| Notes | No | Additional context or instructions |
+
+## Priority Levels
+
+<CardGroup cols={4}>
+  <Card title="Low" icon="circle">
+    Items that can wait - no immediate pressure
+  </Card>
+  <Card title="Medium" icon="circle-dot">
+    Standard priority for regular work
+  </Card>
+  <Card title="High" icon="circle-exclamation">
+    Important items requiring prompt attention
+  </Card>
+  <Card title="Urgent" icon="circle-radiation">
+    Critical items needing immediate action
+  </Card>
+</CardGroup>
+
+## Categories for Management
+
+Organise tasks by type:
+
+- **Operations** - Chambers operational matters
+- **Case Related** - High-value or sensitive matter oversight
+- **Administrative** - Governance, compliance, and admin work
+- **Personal** - Personal reminders and scheduling
+
+## Team Oversight
+
+Management has full visibility across all tasks in the system:
+
+### Viewing Clerk Tasks
+
+When viewing clerk tasks, management sees a **read-only view** with a clear indicator:
+
+- Tasks display with "Viewing tasks (read-only)" message
+- Create, edit, and delete actions are hidden
+- Drag-and-drop is disabled in Kanban view
+- Full filtering and search remains available
+
+This allows management to monitor workload and progress without interfering with clerk workflows.
+
+### Monitoring Team Workload
+
+- Use the **All** tab to see tasks across the entire team
+- Filter by **Assignee** to view a specific team member's workload
+- Monitor the **Overdue** tab to identify bottlenecks
+
+### Delegation
+
+Assign tasks to clerks or other management members:
+
+1. Create a new task or edit an existing one
+2. Select the assignee from the **Assign To** dropdown
+3. Set an appropriate due date and priority
+4. Add notes with any specific instructions
+
+The assigned team member will see the task in their **My Tasks** tab.
+
+## Filtering and Search
+
+Use the filter bar to focus your view:
+
+- **Search** - Find tasks by title, description, or notes
+- **Priority** - Filter by urgency level
+- **Category** - Filter by task type
+- **Assignee** - View tasks for specific team members
+
+## Mobile Access
+
+The Tasks feature is fully optimised for mobile devices:
+
+- **Responsive layout** - Automatically adapts to screen size
+- **Touch-friendly** - Large tap targets for easy interaction
+- **Mobile navigation** - Access via the mobile menu
+- **Kanban on mobile** - Columns stack vertically for scrolling
+
+<Tip>
+Use the mobile app when away from your desk to quickly check on task progress or create urgent items on the go.
+</Tip>
+
+## Streak System
+
+The Tasks feature includes gamification to encourage consistent task completion:
+
+### How It Works
+
+- Complete at least one task daily to build your streak
+- Consecutive days of completion increase your streak count
+- Missing a day resets your streak
+
+### Leaderboard
+
+View the team leaderboard to see completion patterns across the organisation. This provides insight into:
+
+- Team productivity trends
+- Individual engagement levels
+- Potential workload imbalances
+
+## Managing Tasks
+
+### Completing Tasks
+
+- **List view**: Click the checkbox next to the task
+- **Kanban view**: Drag to the Completed column
+
+### Editing Tasks
+
+Click the menu icon (three dots) and select **Edit** to modify any task field.
+
+### Deleting Tasks
+
+Click the menu icon and select **Delete**. Confirmation is required.
+
+<Warning>
+Deleted tasks cannot be recovered. Consider completing rather than deleting to maintain an audit trail.
+</Warning>
+
+## Best Practices for Management
+
+<AccordionGroup>
+  <Accordion title="Use tasks for strategic items">
+    Reserve the Tasks feature for items that need tracking. Quick one-off actions may not need formal task creation.
+  </Accordion>
+  <Accordion title="Set clear ownership">
+    Always assign tasks to specific individuals. Unassigned tasks often fall through the cracks.
+  </Accordion>
+  <Accordion title="Review overdue items weekly">
+    Regular review of overdue tasks helps identify systemic issues or unrealistic deadlines.
+  </Accordion>
+  <Accordion title="Link to leads when relevant">
+    Connecting tasks to leads creates an audit trail and provides context for future reference.
+  </Accordion>
+  <Accordion title="Use priority thoughtfully">
+    If everything is urgent, nothing is urgent. Reserve high/urgent for genuinely time-sensitive items.
+  </Accordion>
+</AccordionGroup>
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `N` | Create new task |
+| `Cmd/Ctrl + Enter` | Save task (in modal) |
+
+## Related Features
+
+- [Follow-up Oversight](/management/follow-up-oversight) - Monitor opportunity-related follow-ups across the team
+- [Audit Log](/management/audit-log) - Review task creation and completion history
+- [Analytics Dashboard](/management/analytics-dashboard) - Track overall team productivity

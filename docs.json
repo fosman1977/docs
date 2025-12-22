@@ -131,6 +131,12 @@
             ]
           },
           {
+            "group": "Tasks",
+            "pages": [
+              "clerk/tasks"
+            ]
+          },
+          {
             "group": "Follow-ups",
             "pages": [
               "clerk/follow-up-system",
@@ -216,6 +222,7 @@
           {
             "group": "Operations",
             "pages": [
+              "management/tasks",
               "management/follow-up-oversight",
               "management/global-search",
               "management/report-management",
@@ -298,6 +305,12 @@
               "developers/integrations/ai",
               "developers/integrations/sentry",
               "developers/integrations/realtime"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "developers/integrations/tasks-api"
             ]
           }
         ]

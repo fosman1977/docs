@@ -57,22 +57,6 @@ CREATE TABLE clerk_todos (
 );
 ```
 
-### clerk_todo_streaks Table
-
-Tracks completion streaks for gamification.
-
-```sql
-CREATE TABLE clerk_todo_streaks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
-    current_streak INT DEFAULT 0,
-    longest_streak INT DEFAULT 0,
-    last_completion_date DATE,
-    total_completed INT DEFAULT 0,
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
 ### Indexes
 
 ```sql
@@ -164,20 +148,6 @@ interface TodoFormData {
     notes?: string;
     related_lead_id?: string;
     related_opportunity_id?: string;
-}
-```
-
-### Streak Interface
-
-```typescript
-interface TodoStreak {
-    id: string;
-    user_id: string;
-    current_streak: number;
-    longest_streak: number;
-    last_completion_date: string | null;
-    total_completed: number;
-    updated_at: string;
 }
 ```
 
@@ -294,22 +264,6 @@ Soft-delete a todo (sets `is_active = false`).
 const result = await todoService.deleteTodo('todo-uuid');
 ```
 
-#### getStreak(userId)
-
-Get streak stats for a user.
-
-```typescript
-const result = await todoService.getStreak('user-uuid');
-```
-
-#### getStreakLeaderboard()
-
-Get top 10 streaks across all users.
-
-```typescript
-const result = await todoService.getStreakLeaderboard();
-```
-
 #### getTabCounts(userId)
 
 Get counts for all filter tabs.
@@ -353,16 +307,6 @@ CREATE TRIGGER trigger_clerk_todo_completed_at
     EXECUTE FUNCTION set_clerk_todo_completed_at();
 ```
 
-### Streak Updates
-
-```sql
--- Updates user streak when a todo is completed
-CREATE TRIGGER trigger_update_clerk_todo_streak
-    AFTER UPDATE ON clerk_todos
-    FOR EACH ROW
-    EXECUTE FUNCTION update_clerk_todo_streak();
-```
-
 ## Row Level Security (RLS)
 
 ### clerk_todos Policies
@@ -374,14 +318,6 @@ CREATE TRIGGER trigger_update_clerk_todo_streak
 | Clerks can update todos | UPDATE | `has_operational_access()` |
 | Creator can delete own todos | DELETE | `created_by = auth.uid()` |
 | Management full access | ALL | `is_management()` |
-
-### clerk_todo_streaks Policies
-
-| Policy | Operation | Rule |
-|--------|-----------|------|
-| Users can view own streaks | SELECT | `user_id = auth.uid()` |
-| Clerks can view all streaks | SELECT | `has_operational_access()` |
-| System can manage streaks | ALL | `true` (for trigger operations) |
 
 ## Component Architecture
 
@@ -402,7 +338,6 @@ Main page component handling state and orchestrating child components.
 | TodoItem | `$lib/components/features/todos/TodoItem.svelte` | Individual task row |
 | TodoCreateModal | `$lib/components/features/todos/TodoCreateModal.svelte` | Create/edit modal |
 | TodoFilterBar | `$lib/components/features/todos/TodoFilterBar.svelte` | Filter controls |
-| TodoStreakBadge | `$lib/components/features/todos/TodoStreakBadge.svelte` | Streak display |
 
 ### Component Props
 
@@ -452,7 +387,6 @@ interface TodoCompletedEvent {
     todo_id: string;
     completed_by: string;
     completed_by_name: string;
-    new_streak?: number;
 }
 ```
 

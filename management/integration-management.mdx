@@ -15,6 +15,22 @@ Configure and manage integrations with external systems.
 - Payment tracking
 - Barrister revenue data
 
+### Plaud.ai
+- Meeting recording sync from Plaud devices
+- AI-powered transcription
+- Meeting intelligence extraction
+- Link meetings to leads, clients, and opportunities
+
+### Microsoft Teams
+- Notification delivery
+- Alert broadcasts
+- System status updates
+
+### Google Analytics
+- Website traffic analytics
+- Lead source attribution
+- Marketing campaign tracking
+
 ## Managing Integrations
 
 Navigate to **Admin** → **Integrations**
@@ -46,10 +62,43 @@ Monitor the integration:
 ### Troubleshooting
 
 Common issues:
-- Authentication expired (Xero tokens expire after 30 days)
+- Authentication expired (Xero tokens expire after 30 days, Plaud after 30 days)
 - Permission changes
 - API limits reached
 
 <Info>
-If you experience persistent issues, re-authenticate in Admin → Integrations → Xero.
+If you experience persistent issues, re-authenticate in Admin → Integrations.
 </Info>
+
+## Integration-Specific Setup
+
+### Xero Setup
+
+1. Click **Connect Xero**
+2. Log in to your Xero organisation
+3. Grant access to required scopes
+4. Map barristers to Xero contacts in **Xero Mappings**
+
+### Plaud.ai Setup
+
+1. Click **Connect Plaud**
+2. Log in to your Plaud account
+3. Authorise the Chambers Platform
+4. Recordings will sync automatically
+
+<Note>
+Once connected, clerks can access meeting recordings via **Meetings** in the sidebar. See [Meeting Recordings](/clerk/meetings) for usage guide.
+</Note>
+
+### Microsoft Teams Setup
+
+Teams uses incoming webhooks:
+1. Create a webhook in your Teams channel
+2. Copy the webhook URL
+3. Paste into **Admin → Integrations → Teams**
+
+### Google Analytics Setup
+
+1. Create a service account in Google Cloud Console
+2. Grant access to your GA4 property
+3. Upload the service account JSON in integration settings

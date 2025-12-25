@@ -3,22 +3,11 @@ title: "Tasks API"
 description: "Technical reference for the Clerk Tasks feature including database schema, service methods, and real-time events"
 ---
 
-<Note>
 This document provides technical details for developers working with the Tasks (Todos) feature, including database schema, TypeScript types, service methods, and integration points.
-</Note>
-
-## Overview
-
-The Tasks feature is built on:
-
-- **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
-- **Frontend**: SvelteKit with Svelte 5 components
-- **State**: Reactive Svelte stores with optimistic updates
-- **Real-time**: Supabase real-time subscriptions for live updates
 
 ## Database Schema
 
-### clerk_todos Table
+### `clerk_todos` Table
 
 The main table storing all task items.
 
@@ -60,379 +49,286 @@ CREATE TABLE clerk_todos (
 ### Indexes
 
 ```sql
--- Performance indexes
-CREATE INDEX idx_clerk_todos_assigned_to ON clerk_todos(assigned_to) WHERE is_active = true;
+CREATE INDEX idx_clerk_todos_status ON clerk_todos(status);
+CREATE INDEX idx_clerk_todos_assigned_to ON clerk_todos(assigned_to);
 CREATE INDEX idx_clerk_todos_created_by ON clerk_todos(created_by);
-CREATE INDEX idx_clerk_todos_status ON clerk_todos(status) WHERE is_active = true;
-CREATE INDEX idx_clerk_todos_due_date ON clerk_todos(due_date) WHERE is_active = true AND status != 'completed';
-CREATE INDEX idx_clerk_todos_status_created ON clerk_todos(status, created_at DESC) WHERE is_active = true;
-CREATE INDEX idx_clerk_todos_priority ON clerk_todos(priority) WHERE is_active = true AND status != 'completed';
+CREATE INDEX idx_clerk_todos_due_date ON clerk_todos(due_date);
+CREATE INDEX idx_clerk_todos_priority ON clerk_todos(priority);
+```
 
--- Composite index for common queries
-CREATE INDEX idx_clerk_todos_assigned_status ON clerk_todos(assigned_to, status) WHERE is_active = true;
+### Row Level Security
+
+```sql
+-- Users can only see their own tasks or tasks assigned to them
+CREATE POLICY "Users can view own tasks"
+ON clerk_todos FOR SELECT
+USING (
+    auth.uid() = created_by
+    OR auth.uid() = assigned_to
+    OR EXISTS (
+        SELECT 1 FROM user_roles
+        WHERE user_id = auth.uid()
+        AND role IN ('management', 'admin')
+    )
+);
+
+-- Users can only modify their own tasks
+CREATE POLICY "Users can modify own tasks"
+ON clerk_todos FOR ALL
+USING (auth.uid() = created_by);
 ```
 
 ## TypeScript Types
 
-### Core Types
-
 ```typescript
-// Status options
-type TodoStatus = 'pending' | 'in_progress' | 'completed';
+interface ClerkTodo {
+  id: string;
+  title: string;
+  description: string | null;
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  category: 'operations' | 'case_related' | 'admin' | 'personal' | null;
+  due_date: string | null;
+  assigned_to: string | null;
+  created_by: string;
+  completed_at: string | null;
+  completed_by: string | null;
+  related_lead_id: string | null;
+  related_opportunity_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
 
-// Priority levels
-type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
+interface CreateTodoInput {
+  title: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  category?: 'operations' | 'case_related' | 'admin' | 'personal';
+  due_date?: string;
+  assigned_to?: string;
+  related_lead_id?: string;
+}
 
-// Category options
-type TodoCategory = 'operations' | 'case_related' | 'admin' | 'personal';
-
-// Tab filter options
-type TodoTab = 'all' | 'my_tasks' | 'today' | 'overdue' | 'completed';
-```
-
-### Todo Interface
-
-```typescript
-interface Todo {
-    id: string;
-    title: string;
-    description: string | null;
-    status: TodoStatus;
-    priority: TodoPriority;
-    category: TodoCategory | null;
-    due_date: string | null; // ISO date string (YYYY-MM-DD)
-
-    // Assignment
-    assigned_to: string | null;
-    created_by: string;
-
-    // Completion tracking
-    completed_at: string | null;
-    completed_by: string | null;
-
-    // Entity linking
-    related_lead_id: string | null;
-    related_opportunity_id: string | null;
-
-    // Metadata
-    notes: string | null;
-    created_at: string;
-    updated_at: string;
-    is_active: boolean;
+interface UpdateTodoInput {
+  title?: string;
+  description?: string;
+  status?: 'pending' | 'in_progress' | 'completed';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  category?: 'operations' | 'case_related' | 'admin' | 'personal';
+  due_date?: string;
+  assigned_to?: string;
+  related_lead_id?: string;
+  notes?: string;
 }
 ```
 
-### TodoWithDetails Interface
+## API Endpoints
 
-Extended interface with resolved relations and computed fields.
+### List Tasks
 
-```typescript
-interface TodoWithDetails extends Todo {
-    assigned_to_name: string | null;
-    created_by_name: string | null;
-    related_lead_title: string | null;
-    is_overdue: boolean;
+```
+GET /api/todos
+```
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `status` | string | Filter by status |
+| `priority` | string | Filter by priority |
+| `category` | string | Filter by category |
+| `due_before` | string | Due date before (ISO) |
+| `due_after` | string | Due date after (ISO) |
+| `search` | string | Search title/description |
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Follow up with client",
+      "status": "pending",
+      "priority": "high",
+      "due_date": "2025-12-26",
+      "created_at": "2025-12-25T10:00:00Z"
+    }
+  ],
+  "count": 25
 }
 ```
 
-### Form Data Interface
+### Create Task
 
-```typescript
-interface TodoFormData {
-    title: string;
-    description?: string;
-    priority: TodoPriority;
-    category?: TodoCategory;
-    due_date?: string;
-    assigned_to?: string;
-    notes?: string;
-    related_lead_id?: string;
-    related_opportunity_id?: string;
+```
+POST /api/todos
+```
+
+**Request Body:**
+
+```json
+{
+  "title": "Review contract",
+  "description": "Review updated terms",
+  "priority": "high",
+  "category": "case_related",
+  "due_date": "2025-12-30",
+  "related_lead_id": "uuid"
 }
+```
+
+### Update Task
+
+```
+PUT /api/todos/:id
+```
+
+**Request Body:**
+
+```json
+{
+  "status": "completed",
+  "notes": "Completed review, sent to client"
+}
+```
+
+### Delete Task
+
+```
+DELETE /api/todos/:id
 ```
 
 ## TodoService API
 
 The `TodoService` class provides all CRUD operations.
 
-### Import
-
 ```typescript
-import { todoService } from '$lib/services/todo.service';
-```
+class TodoService {
+  // List todos with filters
+  async list(filters: TodoFilters): Promise<ClerkTodo[]>
 
-### Methods
+  // Get single todo
+  async get(id: string): Promise<ClerkTodo | null>
 
-#### getTodos(params?)
+  // Create new todo
+  async create(input: CreateTodoInput): Promise<ClerkTodo>
 
-Fetch todos with filtering, sorting, and pagination.
+  // Update todo
+  async update(id: string, input: UpdateTodoInput): Promise<ClerkTodo>
 
-```typescript
-const result = await todoService.getTodos({
-    filters: {
-        status: 'pending',
-        priority: 'high',
-        category: 'operations',
-        assigned_to: 'user-uuid',
-        search: 'keyword',
-        tab: 'my_tasks'
-    },
-    sort: {
-        field: 'due_date',
-        direction: 'asc'
-    },
-    page: 1,
-    limit: 50
-});
+  // Delete todo (soft delete)
+  async delete(id: string): Promise<void>
 
-// Response
-interface TodoListResponse {
-    success: boolean;
-    data?: TodoWithDetails[];
-    total?: number;
-    page?: number;
-    limit?: number;
-    has_next?: boolean;
-    has_previous?: boolean;
-    error?: string;
+  // Update status only
+  async updateStatus(id: string, status: TodoStatus): Promise<ClerkTodo>
+
+  // Get todos for a specific user
+  async getByUser(userId: string): Promise<ClerkTodo[]>
+
+  // Get overdue todos
+  async getOverdue(): Promise<ClerkTodo[]>
 }
 ```
 
-#### getTodoById(id)
+## Real-Time Events
 
-Fetch a single todo by ID.
-
-```typescript
-const result = await todoService.getTodoById('todo-uuid');
-```
-
-#### createTodo(formData, userId)
-
-Create a new todo.
-
-```typescript
-const result = await todoService.createTodo({
-    title: 'Review contracts',
-    description: 'Review Q4 contracts for renewal',
-    priority: 'high',
-    category: 'operations',
-    due_date: '2025-01-15',
-    assigned_to: 'clerk-uuid'
-}, currentUserId);
-```
-
-#### updateTodo(id, formData)
-
-Update an existing todo.
-
-```typescript
-const result = await todoService.updateTodo('todo-uuid', {
-    title: 'Updated title',
-    priority: 'urgent'
-});
-```
-
-#### completeTodo(id, userId)
-
-Mark a todo as completed.
-
-```typescript
-const result = await todoService.completeTodo('todo-uuid', currentUserId);
-```
-
-#### uncompleteTodo(id)
-
-Revert a completed todo to pending.
-
-```typescript
-const result = await todoService.uncompleteTodo('todo-uuid');
-```
-
-#### updateTodoStatus(id, status)
-
-Update status directly (for Kanban drag-and-drop).
-
-```typescript
-const result = await todoService.updateTodoStatus('todo-uuid', 'in_progress');
-```
-
-#### deleteTodo(id)
-
-Soft-delete a todo (sets `is_active = false`).
-
-```typescript
-const result = await todoService.deleteTodo('todo-uuid');
-```
-
-#### getTabCounts(userId)
-
-Get counts for all filter tabs.
-
-```typescript
-const result = await todoService.getTabCounts('user-uuid');
-
-// Response
-{
-    success: true,
-    data: {
-        all: 25,
-        my_tasks: 12,
-        today: 3,
-        overdue: 2,
-        completed: 45
-    }
-}
-```
-
-## Database Triggers
-
-### Auto-update Timestamps
-
-```sql
--- Automatically updates updated_at on any row change
-CREATE TRIGGER trigger_clerk_todos_updated_at
-    BEFORE UPDATE ON clerk_todos
-    FOR EACH ROW
-    EXECUTE FUNCTION update_clerk_todos_updated_at();
-```
-
-### Auto-set Completion
-
-```sql
--- Sets completed_at when status changes to completed
--- Clears completed_at/completed_by when status changes away from completed
-CREATE TRIGGER trigger_clerk_todo_completed_at
-    BEFORE UPDATE ON clerk_todos
-    FOR EACH ROW
-    EXECUTE FUNCTION set_clerk_todo_completed_at();
-```
-
-## Row Level Security (RLS)
-
-### clerk_todos Policies
-
-| Policy | Operation | Rule |
-|--------|-----------|------|
-| Clerks can view all todos | SELECT | `has_operational_access()` |
-| Clerks can create todos | INSERT | `has_operational_access() AND created_by = auth.uid()` |
-| Clerks can update todos | UPDATE | `has_operational_access()` |
-| Creator can delete own todos | DELETE | `created_by = auth.uid()` |
-| Management full access | ALL | `is_management()` |
-
-## Component Architecture
-
-### Page Component
-
-```
-src/routes/(app)/clerk/todos/+page.svelte
-```
-
-Main page component handling state and orchestrating child components.
-
-### UI Components
-
-| Component | Path | Purpose |
-|-----------|------|---------|
-| TodoList | `$lib/components/features/todos/TodoList.svelte` | List view with tabs |
-| TodoKanban | `$lib/components/features/todos/TodoKanban.svelte` | Kanban board view |
-| TodoItem | `$lib/components/features/todos/TodoItem.svelte` | Individual task row |
-| TodoCreateModal | `$lib/components/features/todos/TodoCreateModal.svelte` | Create/edit modal |
-| TodoFilterBar | `$lib/components/features/todos/TodoFilterBar.svelte` | Filter controls |
-
-### Component Props
-
-#### TodoList / TodoKanban
-
-```typescript
-export let todos: TodoWithDetails[] = [];
-export let loading = false;
-export let clerks: { id: string; full_name: string }[] = [];
-export let readOnly: boolean = false;  // Disables editing for management view
-```
+Tasks integrate with Socket.io for live updates.
 
 ### Events
 
-Components dispatch the following events:
+| Event | Direction | Description |
+|-------|-----------|-------------|
+| `todo:created` | Server → Client | New task created |
+| `todo:updated` | Server → Client | Task updated |
+| `todo:deleted` | Server → Client | Task deleted |
+| `todo:status_changed` | Server → Client | Status changed |
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `create` | `void` | Open create modal |
-| `edit` | `{ todo: TodoWithDetails }` | Open edit modal |
-| `complete` | `{ id: string }` | Mark todo complete |
-| `uncomplete` | `{ id: string }` | Revert to pending |
-| `delete` | `{ id: string }` | Delete todo |
-| `refresh` | `void` | Reload data |
-| `statusChange` | `{ todo, newStatus }` | Kanban drag-drop |
-| `tabChange` | `{ tab: TodoTab }` | Change active tab |
-| `filterChange` | `{ filters: TodoFilters }` | Update filters |
-| `viewChange` | `{ view: 'list' \| 'kanban' }` | Toggle view mode |
-
-## Real-time Events
-
-### Event Types
+### Event Payloads
 
 ```typescript
-interface TodoCreatedEvent {
-    todo: TodoWithDetails;
-    created_by_name: string;
+// todo:created
+{
+  todo: ClerkTodo,
+  createdBy: { id: string, name: string }
 }
 
-interface TodoUpdatedEvent {
-    todo: TodoWithDetails;
-    updated_by: string;
-    updated_by_name: string;
+// todo:updated
+{
+  todo: ClerkTodo,
+  updatedBy: { id: string, name: string },
+  changes: string[] // fields that changed
 }
 
-interface TodoCompletedEvent {
-    todo_id: string;
-    completed_by: string;
-    completed_by_name: string;
+// todo:status_changed
+{
+  todoId: string,
+  previousStatus: string,
+  newStatus: string,
+  changedBy: { id: string, name: string }
 }
 ```
 
-### Subscribing to Changes
+### Subscribing to Events
 
 ```typescript
-const channel = supabase
-    .channel('todos')
-    .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'clerk_todos'
-    }, (payload) => {
-        // Handle real-time update
-    })
-    .subscribe();
+import { io } from 'socket.io-client';
+
+const socket = io('/api/socket');
+
+socket.on('todo:created', (data) => {
+  console.log('New todo:', data.todo);
+});
+
+socket.on('todo:status_changed', (data) => {
+  console.log(`Todo ${data.todoId} changed to ${data.newStatus}`);
+});
 ```
 
-## Helper Functions
+## UI Components
 
-### Database Function
+| Component | Path | Purpose |
+|-----------|------|---------|
+| `TodoList` | `$lib/components/features/todos/TodoList.svelte` | List view with tabs |
+| `TodoKanban` | `$lib/components/features/todos/TodoKanban.svelte` | Kanban board view |
+| `TodoItem` | `$lib/components/features/todos/TodoItem.svelte` | Individual task row |
+| `TodoCreateModal` | `$lib/components/features/todos/TodoCreateModal.svelte` | Create/edit modal |
+| `TodoFilterBar` | `$lib/components/features/todos/TodoFilterBar.svelte` | Filter controls |
 
-```sql
--- Get todos with resolved relations
-SELECT * FROM get_clerk_todos_with_details(
-    p_status := 'pending',
-    p_assigned_to := 'user-uuid',
-    p_priority := 'high',
-    p_include_completed := false
-);
+## Integration Points
+
+### With Leads
+
+Tasks can be linked to leads via `related_lead_id`:
+
+```typescript
+const task = await todoService.create({
+  title: 'Follow up on lead',
+  related_lead_id: leadId,
+  priority: 'high'
+});
 ```
 
-## Mobile Responsiveness
+### With Opportunities
 
-All components are built with mobile-first responsive design:
+Tasks can be linked to opportunities via `related_opportunity_id`:
 
-- **Kanban view**: Columns stack vertically on mobile
-- **List view**: Compact rows with truncated text
-- **Filter bar**: Collapsible on mobile
-- **Modals**: Full-screen on mobile devices
-- **Touch support**: Large tap targets, swipe-friendly
+```typescript
+const task = await todoService.create({
+  title: 'Prepare for meeting',
+  related_opportunity_id: opportunityId
+});
+```
 
-## Performance Considerations
+## Audit Logging
 
-1. **Pagination**: Default limit of 50 items per page
-2. **Indexes**: Composite indexes for common query patterns
-3. **Optimistic updates**: UI updates immediately, reverts on error
-4. **Soft deletes**: `is_active = false` instead of hard deletes
-5. **Partial indexes**: Filtered indexes exclude completed/inactive items
+Task operations are logged to the audit system:
+
+| Event | Description |
+|-------|-------------|
+| `todo.created` | Task created |
+| `todo.updated` | Task modified |
+| `todo.completed` | Task marked complete |
+| `todo.deleted` | Task deleted |

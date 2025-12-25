@@ -1,0 +1,209 @@
+---
+title: "Meeting Recordings"
+description: "Manage Plaud meeting recordings and link them to leads, clients, and opportunities"
+---
+
+The Meetings feature integrates with Plaud.ai recording devices to capture, transcribe, and intelligently process clerk-client meetings. Recordings are automatically synced and can be linked to leads, contacts, and opportunities for enhanced business intelligence.
+
+## Overview
+
+The Meetings page (`/clerk/meetings`) provides:
+
+- **Recording Management** - View and search all synced meeting recordings
+- **Transcription Access** - Read AI-generated transcripts of meetings
+- **Entity Linking** - Connect meetings to leads, clients, or opportunities
+- **Meeting Insights** - AI-extracted summaries, action items, and signals
+
+## Accessing Meetings
+
+Navigate to **Meetings** in the sidebar to access the meetings dashboard.
+
+<Info>
+The Plaud integration must be connected before meetings will appear. See [Integration Management](/management/integration-management) for setup instructions.
+</Info>
+
+## Dashboard Overview
+
+The meetings dashboard displays:
+
+| Metric | Description |
+|--------|-------------|
+| Total Recordings | All synced meeting recordings |
+| Unmatched | Recordings not yet linked to any entity |
+| Pending Actions | Meetings with extracted action items |
+| This Week | Recordings from the current week |
+
+## Viewing Recordings
+
+### Recording List
+
+The main view shows all recordings with:
+
+- **Title** - Meeting title or auto-generated from date/time
+- **Date** - When the meeting occurred
+- **Duration** - Length of the recording
+- **Status** - Transcription status (Processing, Complete, Failed)
+- **Linked To** - Associated lead, client, or opportunity
+
+### Filtering & Search
+
+Use the filter bar to narrow results:
+
+- **Search** - Find by title, transcript content, or participant names
+- **Status** - Filter by transcription status
+- **Linked** - Show only linked or unlinked recordings
+- **Date Range** - Filter by meeting date
+
+### Recording Details
+
+Click any recording to view:
+
+- Full transcription text with speaker identification
+- AI-generated summary
+- Extracted action items
+- Meeting insights (practice areas mentioned, urgency indicators)
+- Linked entities
+
+## Syncing Recordings
+
+Recordings sync automatically from your connected Plaud devices. To trigger a manual sync:
+
+1. Click the **Sync** button in the top-right corner
+2. Wait for the sync to complete (progress indicator shown)
+3. New recordings will appear in the list
+
+<Note>
+Sync frequency depends on your Plaud device settings. Recordings typically appear within minutes of upload to Plaud cloud.
+</Note>
+
+## Linking Meetings to Entities
+
+Linking meetings to leads, clients, or opportunities creates valuable context for business development and client relationship tracking.
+
+### How to Link a Meeting
+
+1. Find the meeting in the list
+2. Click the **Link** button (or the link icon)
+3. The Link Modal opens with three tabs:
+   - **Lead** - Link to an existing lead
+   - **Contact** - Link to a client contact
+   - **Opportunity** - Link to a business opportunity
+4. Search for the entity by name
+5. Click to select and confirm
+
+### Linking Benefits
+
+| Link Type | Benefit |
+|-----------|---------|
+| Lead | Meeting context enhances AI barrister suggestions |
+| Contact | Tracks client engagement frequency and topics |
+| Opportunity | Connects BD activities to meeting outcomes |
+
+### Unlinking a Meeting
+
+1. Open the meeting details
+2. Click the linked entity badge
+3. Select **Unlink** from the dropdown
+
+## Meeting Intelligence
+
+The platform extracts valuable intelligence from meeting transcripts:
+
+### AI Summary
+
+Each transcribed meeting includes an AI-generated summary highlighting:
+- Key discussion points
+- Decisions made
+- Client requirements mentioned
+
+### Action Items
+
+The AI automatically identifies action items:
+- Tasks mentioned during the meeting
+- Follow-up commitments
+- Deadlines discussed
+
+Action items can be converted to clerk tasks with one click.
+
+### Practice Area Detection
+
+Meetings are tagged with detected practice areas based on:
+- Legal topics discussed
+- Case types mentioned
+- Jurisdiction references
+
+This data enriches lead matching and barrister suggestions.
+
+## Workflow Integration
+
+### With Lead Management
+
+When a meeting is linked to a lead:
+- The meeting appears in the lead's activity timeline
+- AI suggestions consider meeting context when recommending barristers
+- Transcript excerpts can be referenced in lead notes
+
+### With CRM
+
+Meetings linked to contacts:
+- Contribute to client engagement scores
+- Appear in client relationship history
+- Help identify active vs dormant relationships
+
+### With Opportunities
+
+Meetings linked to opportunities:
+- Track BD activity outcomes
+- Provide context for opportunity follow-ups
+- Support ROI analysis of business development
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Link Promptly" icon="link">
+    Link meetings to entities soon after they occur while context is fresh
+  </Card>
+  <Card title="Review Summaries" icon="file-lines">
+    Check AI summaries for accuracy before sharing or acting on them
+  </Card>
+  <Card title="Create Tasks" icon="list-check">
+    Convert extracted action items to tasks to ensure follow-through
+  </Card>
+  <Card title="Regular Sync" icon="rotate">
+    Sync recordings regularly to keep your meeting data current
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+### Recordings Not Appearing
+
+1. Verify Plaud integration is connected (check Admin > Integrations)
+2. Ensure your Plaud device has synced to Plaud cloud
+3. Try a manual sync using the Sync button
+4. Check your Plaud app for any upload errors
+
+### Transcription Stuck on Processing
+
+- Large recordings may take several minutes to transcribe
+- Check back after 10-15 minutes
+- If still processing, the Plaud service may be experiencing delays
+
+### Linking Search Not Finding Entity
+
+- Verify the lead/contact/opportunity exists in the system
+- Try searching with partial names or alternative spellings
+- Check you have permission to view the entity
+
+## Privacy & Security
+
+Meeting recordings and transcripts are handled securely:
+
+- **Encryption** - All data encrypted at rest
+- **Access Control** - Only authorised clerks can view recordings
+- **Audit Trail** - All access and actions are logged
+- **Data Retention** - Configurable retention policies apply
+
+<Warning>
+Meeting recordings may contain sensitive client information. Ensure you follow chambers' data handling policies when sharing or discussing meeting content.
+</Warning>

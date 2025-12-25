@@ -1,43 +1,29 @@
 ---
 title: "Tasks"
-description: "Managing your day-to-day tasks with the Clerk Tasks feature"
+description: "Manage your daily work with the Kanban board or list view"
 ---
 
-<Note>
 The Tasks feature provides a dedicated space for clerks to manage their daily work, track progress, and stay organised with a visual Kanban board or list view.
-</Note>
 
 ## Overview
 
-The Tasks page (`/clerk/todos`) is a standalone task management system designed specifically for clerk workflows. Unlike [Follow-up Tasks](/clerk/follow-up-tasks) which are tied to opportunities and leads, Tasks are general-purpose items that can be used for any work you need to track.
+The Tasks page (`/clerk/todos`) is a standalone task management system designed specifically for clerk workflows. Unlike Follow-up Tasks which are tied to opportunities and leads, Tasks are general-purpose items that can be used for any work you need to track.
 
 ## Accessing Tasks
 
-Navigate to **Tasks** from the clerk sidebar, or press `N` anywhere in the application to quickly create a new task.
+Navigate to **Tasks** in the sidebar to access your task board.
 
 ## Views
 
 ### List View
 
-The default view displays tasks in a compact list with tabs for quick filtering:
-
-<CardGroup cols={5}>
-  <Card title="All" icon="list">
-    All active tasks across the team
-  </Card>
-  <Card title="My Tasks" icon="user">
-    Tasks assigned to you
-  </Card>
-  <Card title="Today" icon="calendar">
-    Tasks due today
-  </Card>
-  <Card title="Overdue" icon="triangle-exclamation">
-    Past-due tasks requiring attention
-  </Card>
-  <Card title="Completed" icon="circle-check">
-    Finished tasks
-  </Card>
-</CardGroup>
+The default view displays tasks in a table format with columns for:
+- **Title** - Task name
+- **Status** - Pending, In Progress, or Completed
+- **Priority** - Low, Medium, High, or Urgent
+- **Due Date** - When the task should be completed
+- **Category** - Operations, Case Related, Admin, or Personal
+- **Linked Lead** - Optional association with a lead
 
 ### Kanban View
 
@@ -51,97 +37,44 @@ Drag and drop tasks between columns to update their status instantly.
 
 ## Creating Tasks
 
-Click **New Task** or press `N` to open the task creation modal.
+1. Click **New Task** button
+2. Enter the task title (required)
+3. Add optional details:
+   - Description
+   - Priority level
+   - Category
+   - Due date
+   - Linked lead
+4. Click **Create**
 
-### Required Fields
+## Task Fields
 
 | Field | Description |
 |-------|-------------|
-| Title | A clear, concise description of what needs to be done |
+| Title | Short description of the task |
+| Description | Detailed notes or instructions |
+| Status | Current state (Pending, In Progress, Completed) |
+| Priority | Urgency level (Low, Medium, High, Urgent) |
+| Category | Type of work (Operations, Case Related, Admin, Personal) |
+| Due Date | Target completion date |
+| Linked Lead | Optional association with a lead |
 
-### Optional Fields
+## Filtering Tasks
 
-| Field | Description |
-|-------|-------------|
-| Description | Detailed information about the task |
-| Priority | Low, Medium, High, or Urgent |
-| Category | Operations, Case Related, Administrative, or Personal |
-| Due Date | When the task should be completed |
-| Assign To | Which clerk should handle this task |
-| Link to Lead | Connect the task to an existing lead |
-| Notes | Additional context or instructions |
+Use the filter bar to narrow your view:
 
-<Tip>
-Use the quick date buttons (Today, +1d, +3d, +7d) to rapidly set common due dates.
-</Tip>
+- **Status** - Show only tasks in a specific state
+- **Priority** - Filter by urgency level
+- **Category** - Show only specific task types
+- **Due Date** - Filter by date range
+- **Search** - Find tasks by title or description
 
-## Priority Levels
-
-<CardGroup cols={4}>
-  <Card title="Low" icon="circle">
-    Non-urgent tasks that can be done when time permits
-  </Card>
-  <Card title="Medium" icon="circle-dot">
-    Standard priority for regular work items
-  </Card>
-  <Card title="High" icon="circle-exclamation">
-    Important tasks that should be prioritised
-  </Card>
-  <Card title="Urgent" icon="circle-radiation">
-    Critical tasks requiring immediate attention
-  </Card>
-</CardGroup>
-
-## Categories
-
-Organise your tasks by type:
-
-- **Operations** - Day-to-day clerking activities
-- **Case Related** - Tasks connected to specific matters
-- **Administrative** - Internal admin work
-- **Personal** - Personal reminders and tasks
-
-## Managing Tasks
-
-### Completing Tasks
+## Completing Tasks
 
 - **List view**: Click the checkbox next to the task
 - **Kanban view**: Drag the task to the "Completed" column
 
 Completed tasks remain visible in the Completed tab for reference.
-
-### Editing Tasks
-
-Click the menu icon (three dots) on any task and select **Edit** to modify:
-- Title and description
-- Priority and category
-- Due date
-- Assignment
-- Notes
-
-### Deleting Tasks
-
-Click the menu icon and select **Delete**. You'll be asked to confirm before the task is removed.
-
-<Warning>
-Deleted tasks cannot be recovered. Consider marking tasks as complete instead if you want to maintain a record.
-</Warning>
-
-## Filtering and Search
-
-Use the filter bar to narrow down your task list:
-
-- **Search** - Find tasks by title, description, or notes
-- **Priority** - Filter by priority level
-- **Category** - Filter by task category
-- **Assignee** - Show only tasks assigned to a specific clerk
-
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `N` | Create new task |
-| `Cmd/Ctrl + Enter` | Save task (when modal is open) |
 
 ## Linking Tasks to Leads
 
@@ -153,26 +86,6 @@ When creating or editing a task, you can link it to an existing lead. This is us
 
 Linked leads appear as a badge on the task card for easy reference.
 
-## Best Practices
-
-<AccordionGroup>
-  <Accordion title="Review tasks each morning">
-    Start your day by checking the Today and Overdue tabs. Address overdue items first to prevent backlogs.
-  </Accordion>
-  <Accordion title="Use categories consistently">
-    Consistent categorisation helps with filtering and reporting. Agree on category usage with your team.
-  </Accordion>
-  <Accordion title="Set realistic due dates">
-    Avoid setting everything as urgent. Thoughtful prioritisation makes the urgent items stand out.
-  </Accordion>
-  <Accordion title="Add context in notes">
-    Future you (or a colleague) will thank you for detailed notes explaining why a task exists.
-  </Accordion>
-  <Accordion title="Complete tasks promptly">
-    Mark tasks as complete immediately when finished to keep your list accurate.
-  </Accordion>
-</AccordionGroup>
-
 ## Tasks vs Follow-up Tasks
 
 | Feature | Tasks | Follow-up Tasks |
@@ -183,4 +96,30 @@ Linked leads appear as a badge on the task card for easy reference.
 | Outcomes | Simple complete/incomplete | Detailed outcome tracking |
 | Automation | Manual creation | Auto-created by system |
 
-Use **Tasks** for your personal and team to-do items. Use **Follow-up Tasks** when working specifically with opportunities that need outcome tracking.
+Use Tasks for your personal and team to-do items. Use Follow-up Tasks when working specifically with opportunities that need outcome tracking.
+
+## Mobile Support
+
+The Tasks page is fully responsive:
+
+- List view adapts to narrow screens
+- Kanban columns stack vertically on mobile
+- Touch-friendly drag and drop
+- Swipe actions for quick status changes
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Daily Review" icon="calendar-check">
+    Review your task board at the start and end of each day
+  </Card>
+  <Card title="Set Priorities" icon="arrow-up">
+    Mark urgent tasks appropriately so they stand out
+  </Card>
+  <Card title="Use Categories" icon="folder">
+    Categorise tasks to make filtering easier
+  </Card>
+  <Card title="Link to Leads" icon="link">
+    Connect tasks to leads for better context
+  </Card>
+</CardGroup>

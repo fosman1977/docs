@@ -131,6 +131,12 @@
             ]
           },
           {
+            "group": "Meetings",
+            "pages": [
+              "clerk/meetings"
+            ]
+          },
+          {
             "group": "Tasks",
             "pages": [
               "clerk/tasks"
@@ -300,11 +306,13 @@
             "group": "Integrations",
             "pages": [
               "developers/integrations/xero",
+              "developers/integrations/plaud",
               "developers/integrations/microsoft-teams",
               "developers/integrations/google-analytics",
               "developers/integrations/ai",
               "developers/integrations/sentry",
-              "developers/integrations/realtime"
+              "developers/integrations/realtime",
+              "developers/integrations/tasks-api"
             ]
           },
           {

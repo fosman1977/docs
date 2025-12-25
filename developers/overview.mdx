@@ -22,6 +22,10 @@ graph LR
         Xero[Xero]
     end
 
+    subgraph "Meetings"
+        Plaud[Plaud.ai]
+    end
+
     subgraph "Communications"
         Teams[Microsoft Teams]
     end
@@ -40,6 +44,7 @@ graph LR
     end
 
     Services --> Xero
+    Services --> Plaud
     Services --> Teams
     Services --> GA4
     Services --> Claude
@@ -54,6 +59,7 @@ graph LR
 | Integration | Purpose | Auth Method | Sync Direction |
 |-------------|---------|-------------|----------------|
 | [Xero](/developers/integrations/xero) | Financial data, Invoices | OAuth 2.0 | One-way (from Xero) |
+| [Plaud.ai](/developers/integrations/plaud) | Meeting recordings, Transcription | OAuth 2.0 | Bidirectional |
 | [Microsoft Teams](/developers/integrations/microsoft-teams) | Notifications, Alerts | Webhook | Outbound |
 | [Google Analytics](/developers/integrations/google-analytics) | Website analytics | Service Account | One-way (from GA) |
 | [AI (Claude & OpenAI)](/developers/integrations/ai) | AI insights, Suggestions | API Keys | Request/Response |
@@ -94,6 +100,7 @@ Each integration respects API rate limits:
 | Service | Rate Limit |
 |---------|------------|
 | Xero | 60 req/min, 5000 req/day |
+| Plaud | 10 req/min per user |
 | Microsoft Graph | 10,000 req/10 min |
 | OpenAI | Varies by tier |
 | Claude | Varies by tier |
@@ -116,6 +123,11 @@ Integrations implement graceful degradation:
 XERO_CLIENT_ID=your_client_id
 XERO_CLIENT_SECRET=your_client_secret
 XERO_REDIRECT_URI=your_redirect_uri
+
+# Plaud.ai
+PLAUD_CLIENT_ID=your_plaud_client_id
+PLAUD_CLIENT_SECRET=your_plaud_client_secret
+PLAUD_OAUTH_REDIRECT_URI=your_redirect_uri
 
 # Microsoft Teams (optional)
 TEAMS_WEBHOOK_URL=your_webhook_url
@@ -206,6 +218,19 @@ Automatic syncs run on schedule:
 | `/api/messages/broadcast` | POST | Send chambers-wide message |
 | `/api/messages/broadcast/[id]` | GET | Get broadcast details |
 | `/api/messages/polls/[id]/vote` | POST | Submit poll vote |
+
+### Plaud Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/plaud/auth` | GET | Initiate OAuth flow |
+| `/api/plaud/auth/callback` | GET | OAuth callback handler |
+| `/api/plaud/status` | GET | Check connection status |
+| `/api/plaud/disconnect` | POST | Revoke access |
+| `/api/plaud/recordings` | GET | List local recordings |
+| `/api/plaud/recordings` | POST | Sync from Plaud API |
+| `/api/plaud/meetings/[id]/link` | POST | Link meeting to entity |
+| `/api/plaud/meetings/[id]/link` | DELETE | Unlink meeting |
 
 ## Security Considerations
 

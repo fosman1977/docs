@@ -84,9 +84,13 @@ sequenceDiagram
 
 ## Financial Data
 
+<Info>
+All financial figures synced from Xero are exclusive of VAT.
+</Info>
+
 ### Income Tracking
 
-Income is extracted from Xero reports:
+Income is primarily sourced from LEX payment summary reports. When LEX data is unavailable, income is estimated by back-calculating from Xero contribution records:
 
 ```typescript
 interface FinancialRecord {

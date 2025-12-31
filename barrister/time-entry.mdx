@@ -15,6 +15,7 @@ Recording time in the Chambers Platform:
 - **No chasing** - Eliminates back-and-forth for billing information
 - **Accurate utilisation** - Your workload data stays current
 - **Faster invoicing** - Clerks can process invoices without delays
+- **Automatic notifications** - Get notified when entries are approved or invoiced
 
 ## Accessing Time Entry
 
@@ -60,18 +61,50 @@ Your time entries progress through these statuses:
 | Invoiced | Included on a client invoice |
 | Paid | Payment received |
 
-## Real-Time Updates
+## Real-Time Notifications
 
-When you submit a time entry:
+The platform uses WebSocket connections to deliver instant notifications at each stage of the time entry workflow.
 
-1. Clerks receive an instant notification
+### When You Submit an Entry
+
+1. **Clerks receive an instant notification** - Appears in their notification centre immediately
 2. The entry appears on their billing dashboard
 3. They can immediately begin invoice processing
-4. You're notified when the entry is approved or invoiced
+
+### When Your Entry is Processed
+
+You receive notifications when:
+
+| Event | Notification |
+|-------|--------------|
+| **Approved** | "Your time entry for [Matter] has been approved" |
+| **Invoiced** | "Your time entry for [Matter] has been included on invoice #[Number]" |
+| **Paid** | "Payment received for invoice #[Number]" |
 
 <Info>
-This real-time sync eliminates the traditional delay between logging time and getting invoiced.
+Notifications are delivered in real-time via WebSocket when you're online, and queued for delivery when you next log in if you're offline.
 </Info>
+
+### Notification Settings
+
+You can customise which notifications you receive:
+
+1. Navigate to **Settings** > **Notifications**
+2. Find the **Billing** section
+3. Toggle notifications for:
+   - Entry approvals
+   - Invoice inclusions
+   - Payment confirmations
+
+## WebSocket Events
+
+For developers, the following events are broadcast:
+
+| Event | Direction | Description |
+|-------|-----------|-------------|
+| `billing:entry:submitted` | Server → Clerks | Barrister submitted new time entry |
+| `billing:entry:approved` | Server → Barrister | Clerk approved time entry |
+| `billing:entry:invoiced` | Server → Barrister | Entry included on invoice |
 
 ## Viewing Your Entries
 
@@ -109,7 +142,32 @@ Log time daily while details are fresh. Regular entries mean more accurate billi
 
 ### Best Practices
 
-- **Be specific** - Include enough detail for the client to understand the work
-- **Log promptly** - Record time as you complete tasks
-- **Check matters** - Ensure you're logging to the correct case
-- **Review regularly** - Check pending entries haven't been missed
+<CardGroup cols={2}>
+  <Card title="Be Specific" icon="file-lines">
+    Include enough detail for the client to understand the work performed
+  </Card>
+  <Card title="Log Promptly" icon="clock">
+    Record time as you complete tasks while details are fresh
+  </Card>
+  <Card title="Check Matters" icon="folder">
+    Ensure you're logging to the correct case before submitting
+  </Card>
+  <Card title="Review Regularly" icon="magnifying-glass">
+    Check pending entries haven't been missed or left in draft
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+### Not Receiving Notifications
+
+1. Check your notification settings are enabled for billing events
+2. Verify your browser allows notifications from the platform
+3. Try refreshing the page to re-establish the WebSocket connection
+4. Check if notifications appear when you next log in (queued delivery)
+
+### Entry Not Appearing for Clerks
+
+1. Ensure the entry status is "Submitted" not "Draft"
+2. Check your internet connection
+3. Try refreshing the page and resubmitting

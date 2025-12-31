@@ -13,6 +13,7 @@ The Meetings page (`/clerk/meetings`) provides:
 - **Transcription Access** - Read AI-generated transcripts of meetings
 - **Entity Linking** - Connect meetings to leads, clients, or opportunities
 - **Meeting Insights** - AI-extracted summaries, action items, and signals
+- **Content Highlighting** - Annotate important sections of meeting content
 
 ## Accessing Meetings
 
@@ -63,6 +64,83 @@ Click any recording to view:
 - Extracted action items
 - Meeting insights (practice areas mentioned, urgency indicators)
 - Linked entities
+- Content highlights (shared annotations)
+
+## Content Highlighting
+
+The highlighting feature allows clerks to annotate important sections of meeting content for easy reference and collaboration.
+
+### What Can Be Highlighted
+
+You can highlight text in four content sections:
+
+| Content Type | Description |
+|--------------|-------------|
+| **Summary** | AI-generated meeting summary |
+| **Todo** | Extracted action items and tasks |
+| **Client Needs** | Identified client requirements |
+| **Minutes** | Full meeting transcript/minutes |
+
+### How to Create a Highlight
+
+<Steps>
+  <Step title="Select Text">
+    Click and drag to select the text you want to highlight in any content section
+  </Step>
+  <Step title="Choose Colour">
+    Select a highlight colour from the popup menu:
+    - **Yellow** - General importance
+    - **Green** - Positive/approved items
+    - **Blue** - Information/reference
+    - **Pink** - Urgent/attention needed
+    - **Orange** - Follow-up required
+  </Step>
+  <Step title="Confirm">
+    Click to apply the highlight
+  </Step>
+</Steps>
+
+### Highlight Colours & Meanings
+
+Use colours consistently across your team for better collaboration:
+
+| Colour | Suggested Use |
+|--------|---------------|
+| <span style={{color: '#fef08a'}}>Yellow</span> | General importance, key points |
+| <span style={{color: '#bbf7d0'}}>Green</span> | Confirmed items, positive outcomes |
+| <span style={{color: '#bfdbfe'}}>Blue</span> | Reference information, background |
+| <span style={{color: '#fbcfe8'}}>Pink</span> | Urgent items, requires immediate attention |
+| <span style={{color: '#fed7aa'}}>Orange</span> | Follow-up needed, pending items |
+
+### Shared Highlights
+
+Highlights are **shared across all clerks**:
+
+- All clerks can view highlights created by any team member
+- You can only edit or delete highlights you created
+- Hover over a highlight to see who created it and when
+
+<Tip>
+Use highlights to draw colleagues' attention to important sections when handing over meetings or collaborating on leads.
+</Tip>
+
+### Managing Highlights
+
+#### Changing Highlight Colour
+
+1. Click on an existing highlight you created
+2. Select a new colour from the menu
+3. The highlight updates immediately
+
+#### Removing a Highlight
+
+1. Click on a highlight you created
+2. Click the delete/remove option
+3. The highlight is removed (text remains)
+
+<Note>
+You can only modify or delete highlights you created. Other clerks' highlights are read-only.
+</Note>
 
 ## Syncing Recordings
 
@@ -142,6 +220,7 @@ When a meeting is linked to a lead:
 - The meeting appears in the lead's activity timeline
 - AI suggestions consider meeting context when recommending barristers
 - Transcript excerpts can be referenced in lead notes
+- Highlights draw attention to relevant sections
 
 ### With CRM
 
@@ -163,14 +242,14 @@ Meetings linked to opportunities:
   <Card title="Link Promptly" icon="link">
     Link meetings to entities soon after they occur while context is fresh
   </Card>
-  <Card title="Review Summaries" icon="file-lines">
-    Check AI summaries for accuracy before sharing or acting on them
+  <Card title="Use Highlights" icon="highlighter">
+    Highlight key sections to help colleagues quickly find important information
   </Card>
   <Card title="Create Tasks" icon="list-check">
     Convert extracted action items to tasks to ensure follow-through
   </Card>
-  <Card title="Regular Sync" icon="rotate">
-    Sync recordings regularly to keep your meeting data current
+  <Card title="Colour Consistently" icon="palette">
+    Establish team conventions for highlight colours to improve collaboration
   </Card>
 </CardGroup>
 
@@ -195,6 +274,12 @@ Meetings linked to opportunities:
 - Try searching with partial names or alternative spellings
 - Check you have permission to view the entity
 
+### Highlights Not Saving
+
+- Ensure you're logged in with an active session
+- Check your network connection
+- Refresh the page and try again
+
 ## Privacy & Security
 
 Meeting recordings and transcripts are handled securely:
@@ -203,6 +288,7 @@ Meeting recordings and transcripts are handled securely:
 - **Access Control** - Only authorised clerks can view recordings
 - **Audit Trail** - All access and actions are logged
 - **Data Retention** - Configurable retention policies apply
+- **Highlight Attribution** - All highlights tracked with creator info
 
 <Warning>
 Meeting recordings may contain sensitive client information. Ensure you follow chambers' data handling policies when sharing or discussing meeting content.

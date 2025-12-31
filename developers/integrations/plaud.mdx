@@ -14,6 +14,7 @@ The Plaud integration provides:
 - **Transcription** - AI-powered speech-to-text with speaker identification
 - **Entity Linking** - Connect meetings to leads, contacts, and opportunities
 - **AI Enhancement** - Meeting context enriches barrister suggestions
+- **Content Highlighting** - Shared annotations on meeting content
 
 ## Architecture
 
@@ -212,6 +213,203 @@ Trigger sync from Plaud API.
 }
 ```
 
+### Meeting Content
+
+#### `GET /api/plaud/meetings/[id]/transcribe`
+
+Fetch transcription for a specific meeting.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "transcription": {
+    "text": "Full transcript text...",
+    "segments": [...],
+    "speakers": [...],
+    "language": "en",
+    "confidence": 0.95
+  }
+}
+```
+
+---
+
+#### `GET /api/plaud/meetings/[id]/content`
+
+Get processed meeting content including AI-generated summaries.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "content": {
+    "summary": "Meeting summary text...",
+    "todo": ["Action item 1", "Action item 2"],
+    "client_needs": ["Need 1", "Need 2"],
+    "minutes": "Full meeting minutes..."
+  }
+}
+```
+
+---
+
+#### `POST /api/plaud/meetings/[id]/archive`
+
+Archive a meeting recording.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Meeting archived"
+}
+```
+
+### Meeting Highlights
+
+The highlights API allows creating shared annotations on meeting content.
+
+#### `GET /api/plaud/meetings/[id]/highlights`
+
+Fetch all highlights for a meeting.
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `contentType` | string | Filter by content type (optional) |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "highlights": [
+    {
+      "id": "uuid",
+      "contentType": "summary",
+      "startOffset": 150,
+      "endOffset": 230,
+      "highlightedText": "Important client requirement mentioned here",
+      "color": "yellow",
+      "createdBy": "uuid",
+      "createdAt": "2025-12-31T10:30:00Z"
+    }
+  ]
+}
+```
+
+---
+
+#### `POST /api/plaud/meetings/[id]/highlights`
+
+Create a new highlight.
+
+**Request Body:**
+
+```json
+{
+  "contentType": "summary",
+  "startOffset": 150,
+  "endOffset": 230,
+  "highlightedText": "Important client requirement mentioned here",
+  "color": "yellow"
+}
+```
+
+**Content Types:**
+
+| Type | Description |
+|------|-------------|
+| `summary` | AI-generated meeting summary |
+| `todo` | Extracted action items |
+| `client_needs` | Identified client requirements |
+| `minutes` | Full meeting transcript |
+
+**Highlight Colours:**
+
+| Colour | Hex Code |
+|--------|----------|
+| `yellow` | #fef08a |
+| `green` | #bbf7d0 |
+| `blue` | #bfdbfe |
+| `pink` | #fbcfe8 |
+| `orange` | #fed7aa |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "highlight": {
+    "id": "uuid",
+    "contentType": "summary",
+    "startOffset": 150,
+    "endOffset": 230,
+    "highlightedText": "Important client requirement mentioned here",
+    "color": "yellow",
+    "createdBy": "uuid",
+    "createdAt": "2025-12-31T10:30:00Z"
+  }
+}
+```
+
+---
+
+#### `PATCH /api/plaud/meetings/[id]/highlights?highlightId={id}`
+
+Update a highlight colour (owner only).
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `highlightId` | uuid | ID of the highlight to update |
+
+**Request Body:**
+
+```json
+{
+  "color": "green"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "highlight": {
+    "id": "uuid",
+    "color": "green"
+  }
+}
+```
+
+---
+
+#### `DELETE /api/plaud/meetings/[id]/highlights?highlightId={id}`
+
+Delete a highlight (owner only).
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `highlightId` | uuid | ID of the highlight to delete |
+
+**Response:**
+
+```json
+{
+  "success": true
+}
+```
+
 ### Meeting Linking
 
 #### `POST /api/plaud/meetings/[id]/link`
@@ -320,6 +518,28 @@ Core meeting storage.
 | `contact_id` | uuid | Linked contact (nullable) |
 | `opportunity_id` | uuid | Linked opportunity (nullable) |
 
+#### `meeting_content_highlights`
+
+Shared text highlights on meeting content.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | uuid | Primary key |
+| `meeting_id` | uuid | Foreign key to plaud_meetings |
+| `content_type` | text | summary, todo, client_needs, minutes |
+| `start_offset` | integer | Character start position |
+| `end_offset` | integer | Character end position |
+| `highlighted_text` | text | The highlighted text content |
+| `color` | text | yellow, green, blue, pink, orange |
+| `created_by` | uuid | Foreign key to users |
+| `created_at` | timestamp | When highlight was created |
+
+**RLS Policies:**
+
+- All clerks can read all highlights
+- Only the creator can update/delete their highlights
+- Management has full access
+
 #### `plaud_sync_log`
 
 Sync operation audit trail.
@@ -367,11 +587,16 @@ interface PlaudMeetingInsights {
   lead_signals: PlaudLeadSignal[];
 }
 
-interface PlaudActionItem {
-  description: string;
-  assignee?: string;
-  due_date?: string;
-  priority: 'low' | 'medium' | 'high';
+interface MeetingContentHighlight {
+  id: string;
+  meetingId: string;
+  contentType: 'summary' | 'todo' | 'client_needs' | 'minutes';
+  startOffset: number;
+  endOffset: number;
+  highlightedText: string;
+  color: 'yellow' | 'green' | 'blue' | 'pink' | 'orange';
+  createdBy: string;
+  createdAt: string;
 }
 ```
 
@@ -469,6 +694,8 @@ The following events are logged to `audit_log`:
 | `plaud.sync_completed` | Recording sync finished |
 | `plaud.meeting_linked` | Meeting linked to entity |
 | `plaud.meeting_unlinked` | Meeting unlinked from entity |
+| `plaud.highlight_created` | Highlight added to meeting content |
+| `plaud.highlight_deleted` | Highlight removed from meeting content |
 
 ## Troubleshooting
 
@@ -490,3 +717,10 @@ The following events are logged to `audit_log`:
 1. Refresh token may have expired (30 days)
 2. User needs to re-authenticate via OAuth
 3. Check encryption key hasn't changed
+
+### Highlights Not Saving
+
+1. Verify the meeting exists in the database
+2. Check user has clerk or management role
+3. Ensure content type is valid (summary, todo, client_needs, minutes)
+4. Verify offsets are valid (endOffset > startOffset)

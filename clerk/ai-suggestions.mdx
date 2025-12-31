@@ -11,12 +11,65 @@ AI Suggestions help clerks quickly identify the best barristers for each lead.
 
 When you create or review a lead, AI can suggest which barristers are best suited based on:
 
-- **Specialisations** - Practice area expertise
-- **Experience** - Years of call, track record
+- **Practice Areas** - Matched via the practice areas junction table for accurate expertise mapping
+- **Specialisations** - Legacy specialisation text matching
 - **Seniority Preference** - KC/Silk, Senior Junior, or Junior filtering
+- **Jurisdiction** - Primary and additional jurisdiction matching
+- **Experience** - Years of call matched to case complexity
 - **Availability** - Current utilisation levels
-- **Jurisdiction** - Geographic expertise
-- **Past Performance** - Success rates, client feedback
+- **Languages** - Multilingual capability for international matters
+
+## How Matching Works
+
+The AI suggestion engine uses a comprehensive scoring algorithm that considers multiple factors:
+
+### Practice Area Matching (up to 25 points)
+
+The system matches barristers to leads using a multi-tier approach:
+
+1. **Exact ID Match** - If the lead's practice area ID matches a barrister's assigned practice area
+   - Primary practice area: +25 points
+   - Secondary practice area: +20 points
+
+2. **Category Match** - Matches broader categories (e.g., "Criminal Fraud" matches "Criminal Law")
+   - Considers practice area names and categories
+   - Common legal term matching (fraud, criminal, civil, commercial, regulatory)
+
+3. **Legacy Text Match** - Falls back to specialisation text matching if no practice areas assigned
+
+### Jurisdiction Matching (up to 20 points)
+
+- **Primary Jurisdiction Match**: +15 points
+- **Additional Jurisdictions**: +5 points each (up to 5 additional points)
+
+### Seniority Filtering
+
+When you set a seniority preference, barristers are **pre-filtered** before scoring:
+
+| Preference | Filter Applied |
+|------------|----------------|
+| **KC/Silk** | Only `is_silk = true` barristers |
+| **Senior Junior** | 10+ years call AND `is_silk = false` |
+| **Junior** | Under 10 years call AND `is_silk = false` |
+| **Any** | No filter - all eligible barristers |
+
+Barristers matching the preference receive a +10 point bonus.
+
+### Experience Level Matching (up to 10 points)
+
+Experience is matched to case complexity:
+
+| Complexity | Required Experience | Points |
+|------------|---------------------|--------|
+| Expert | 15+ years | +10 |
+| High | 10+ years | +8 |
+| Medium | 5+ years | +6 |
+| Standard | 3+ years | +4 |
+
+### Additional Factors
+
+- **KC/Silk for Complex Cases**: +10 points for high-value or complex matters
+- **Multilingual**: +5 points for international cases with multiple jurisdictions
 
 ## Getting Suggestions
 
@@ -31,9 +84,9 @@ When you create or review a lead, AI can suggest which barristers are best suite
 
 Each suggestion shows:
 
-- **Match Score** (e.g., 92%) - How well they match
-- **Reasons** - Why they're recommended
-- **Availability** - Current utilisation
+- **Match Score** (e.g., 92%) - Overall match percentage
+- **Reasons** - Specific factors driving the recommendation
+- **Availability** - Current utilisation percentage
 - **Action buttons** - Assign or view profile
 
 ### Match Score Guide
@@ -45,17 +98,30 @@ Each suggestion shows:
 | 60-74% | Moderate match - consider if others unavailable |
 | Below 60% | Weak match - typically not shown |
 
+### Sample Reasoning
+
+The AI provides specific reasoning for each suggestion:
+
+> "Sarah Thompson KC - Specialises in Criminal Fraud, Practices in England & Wales, KC/Silk as requested"
+
+> "James Wilson - Senior Junior (12 years call), Specialises in Civil Fraud, Good availability (45%)"
+
 ## Improving Suggestion Quality
 
-Better input = better suggestions. Include:
+Better input = better suggestions:
 
-| Field | Impact |
-|-------|--------|
-| Practice Area | **Critical** - Primary matching factor |
-| Seniority Preference | **High** - Filters by experience level |
-| Jurisdiction | **High** - Filters by expertise |
-| Value Estimate | **Medium** - Matches seniority level |
-| Description | **Medium** - Identifies specific needs |
+| Field | Impact | Why |
+|-------|--------|-----|
+| Practice Area | **Critical** | Primary matching factor via practice areas table |
+| Seniority Preference | **High** | Pre-filters barrister pool before scoring |
+| Jurisdiction | **High** | Matches primary and additional jurisdictions |
+| Complexity Level | **Medium** | Matches experience requirements |
+| Value Estimate | **Medium** | Influences seniority appropriateness |
+| Description | **Medium** | May identify specific needs |
+
+<Tip>
+Setting the seniority preference is the most effective way to quickly narrow suggestions to appropriate candidates.
+</Tip>
 
 ## When to Override AI
 
@@ -76,9 +142,9 @@ Better input = better suggestions. Include:
 <CardGroup cols={2}>
   <Card title="Do" icon="check">
     - Fill in lead details first
+    - Set seniority preference if known
     - Review reasons, not just scores
     - Use your judgement alongside AI
-    - Provide feedback on quality
   </Card>
   <Card title="Don't" icon="xmark">
     - Request suggestions for empty leads

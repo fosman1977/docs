@@ -18,7 +18,20 @@ Click on any lead to open its details page showing all information and available
 - Title and description
 - Practice area and jurisdiction
 - Source and referral information
+- Seniority preference (KC/Silk, Senior Junior, Junior, or Any)
 - Creation date and creator
+
+### Source Opportunity
+
+If the lead originated from a business development activity:
+
+- **Source Opportunity Badge** - Displays "From: [Opportunity Title]" prominently
+- **Link to Opportunity** - Click to view the source opportunity details
+- **Attribution Tracking** - Connects BD activities to converted work
+
+<Info>
+Leads linked to source opportunities help track ROI on business development activities and events.
+</Info>
 
 ### Client Information
 
@@ -38,20 +51,35 @@ Click on any lead to open its details page showing all information and available
 - Past assignments
 - Responses received
 
+### Progress Updates
+
+Track the lead's progress with timestamped updates:
+
+| Field | Description |
+|-------|-------------|
+| **Status** | Current stage (Created, Assigned, Accepted, etc.) |
+| **Description** | Detailed notes about the progress update |
+| **Updated By** | Who made the update |
+| **Timestamp** | When the update occurred |
+
+<Tip>
+Add detailed descriptions to progress updates to maintain a clear audit trail of the lead's journey.
+</Tip>
+
 ## Available Actions
 
 <CardGroup cols={2}>
   <Card title="Edit Lead" icon="pencil">
-    Modify lead details
+    Modify lead details including seniority preference and source opportunity
   </Card>
   <Card title="Assign" icon="user-plus">
-    Assign to barrister(s)
+    Assign to barrister(s) - filtered by seniority preference
   </Card>
   <Card title="AI Suggest" icon="robot">
-    Get AI suggestions
+    Get AI suggestions based on practice area, jurisdiction, and seniority
   </Card>
   <Card title="Convert" icon="check">
-    Mark as converted
+    Mark as converted when instruction is confirmed
   </Card>
 </CardGroup>
 
@@ -67,3 +95,67 @@ Click on any lead to open its details page showing all information and available
 - Add notes
 - Log calls
 - Email client (via integration)
+
+## Adding Progress Updates
+
+When updating a lead's status or progress:
+
+<Steps>
+  <Step title="Click Update Progress">
+    Select the "Update Progress" button on the lead details page
+  </Step>
+  <Step title="Select New Status">
+    Choose the appropriate status from the dropdown
+  </Step>
+  <Step title="Add Description">
+    Enter a detailed description of the progress or reason for the status change
+  </Step>
+  <Step title="Save">
+    Click "Save" to record the update with timestamp
+  </Step>
+</Steps>
+
+### Progress Update Best Practices
+
+- **Be Specific** - Include relevant details about conversations, decisions, or next steps
+- **Document Reasons** - When marking as lost, explain why (e.g., "Client chose different chambers - fee sensitivity")
+- **Track Follow-ups** - Note any scheduled follow-up actions
+- **Client Preferences** - Record any client preferences mentioned for future reference
+
+## Source Opportunity Display
+
+When a lead has a linked source opportunity:
+
+```
+┌─────────────────────────────────────────┐
+│  Lead: Smith v Jones Contract Dispute   │
+│  ┌─────────────────────────────────┐    │
+│  │ From: Annual Client Conference  │    │
+│  └─────────────────────────────────┘    │
+│                                         │
+│  Practice Area: Commercial Litigation   │
+│  Seniority: Senior Junior               │
+│  Value: £75,000                         │
+└─────────────────────────────────────────┘
+```
+
+The source opportunity badge:
+- Appears prominently below the lead title
+- Links directly to the opportunity details page
+- Helps identify leads generated from specific BD activities
+
+## Seniority Preference Display
+
+The lead details page shows the seniority preference setting:
+
+| Display | Meaning |
+|---------|---------|
+| **KC/Silk** | Client requires King's Counsel |
+| **Senior Junior** | 10+ years call preferred |
+| **Junior** | Under 10 years call acceptable |
+| **Any** | No specific seniority requirement |
+
+This preference affects:
+- AI suggestion results
+- Manual barrister selection filtering
+- Match score calculations

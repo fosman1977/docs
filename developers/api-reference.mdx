@@ -328,7 +328,7 @@ Or:
 
 ### GET /api/barristers
 
-List all barristers with availability data.
+List all barristers with profile and metrics data.
 
 **Response (200):**
 ```json
@@ -340,11 +340,6 @@ List all barristers with availability data.
       "email": "jsmith@chambers.com",
       "seniority": "KC",
       "practiceAreas": ["Commercial Litigation", "Banking"],
-      "availability": {
-        "status": "available",
-        "utilisation": 45,
-        "nextAvailable": null
-      },
       "metrics": {
         "leadsThisMonth": 8,
         "acceptanceRate": 75,
@@ -376,17 +371,6 @@ Get barrister profile and current workload.
       { "id": "banking", "name": "Banking & Finance", "primary": false }
     ],
     "bio": "John specialises in complex commercial disputes...",
-    "availability": {
-      "status": "available",
-      "utilisation": 45,
-      "weeklyBreakdown": [
-        { "day": "Monday", "utilisation": 80 },
-        { "day": "Tuesday", "utilisation": 40 },
-        { "day": "Wednesday", "utilisation": 20 },
-        { "day": "Thursday", "utilisation": 60 },
-        { "day": "Friday", "utilisation": 25 }
-      ]
-    },
     "currentLeads": [
       {
         "id": "lead-uuid",
@@ -548,9 +532,8 @@ Get AI barrister suggestions for a lead.
         "reasons": [
           "Primary practice area matches: Commercial Litigation",
           "15 years experience in contract disputes",
-          "Currently has capacity (45% utilisation)"
-        ],
-        "availability": "available"
+          "Strong acceptance rate (85%)"
+        ]
       },
       {
         "barristerId": "barrister-uuid-2",
@@ -561,8 +544,7 @@ Get AI barrister suggestions for a lead.
           "Secondary practice area matches",
           "Recent experience with similar clients",
           "Good response time (avg 2.3 hours)"
-        ],
-        "availability": "partially_busy"
+        ]
       }
     ],
     "processingTime": 450,

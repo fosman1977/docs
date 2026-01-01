@@ -1,0 +1,213 @@
+---
+title: "Performance Issues"
+description: "Troubleshooting slow loading, timeouts, and responsiveness problems"
+---
+
+Solutions for when the platform is slow, unresponsive, or experiencing errors.
+
+## Page Loading Issues
+
+<AccordionGroup>
+  <Accordion title="Pages are loading slowly">
+    **Common causes:**
+    - Slow internet connection
+    - Browser cache is full
+    - Too many browser tabs open
+    - Large dataset being loaded
+
+    **Quick fixes:**
+    1. **Refresh the page** - Cmd/Ctrl + R
+    2. **Hard refresh** - Cmd/Ctrl + Shift + R (clears page cache)
+    3. **Close unused tabs** - Free up browser memory
+    4. **Check your connection** - Try loading another website
+
+    **If still slow:**
+    1. Clear browser cache: Cmd/Ctrl + Shift + Delete → Clear cached images and files
+    2. Try a different browser (Chrome, Firefox, Safari, Edge)
+    3. Disable browser extensions temporarily
+    4. Check if the issue occurs on mobile data vs WiFi
+  </Accordion>
+
+  <Accordion title="Dashboard takes too long to load">
+    **Why it happens:** The dashboard loads data from multiple sources (leads, opportunities, financial data, calendar).
+
+    **Solutions:**
+    1. **Wait a few seconds** - First load may take 3-5 seconds
+    2. **Check widget by widget** - One integration may be slow
+    3. **Reduce date range** - If filtering by date, use a smaller range
+
+    **If consistently slow:**
+    - Check the connection status indicator in the footer
+    - Report to your administrator - there may be a sync issue
+  </Accordion>
+
+  <Accordion title="Infinite loading spinner">
+    **Causes:**
+    - Network request failed silently
+    - JavaScript error on the page
+    - Session expired mid-load
+
+    **Solutions:**
+    1. **Refresh the page** - Most common fix
+    2. **Check browser console** - Press F12 → Console tab → Look for red errors
+    3. **Log out and log back in** - Session may have expired
+    4. **Try incognito/private mode** - Rules out extension conflicts
+  </Accordion>
+
+  <Accordion title="'Failed to load' error messages">
+    **What they mean:**
+
+    | Error | Cause | Fix |
+    |-------|-------|-----|
+    | "Failed to load leads" | API error or timeout | Refresh page |
+    | "Network error" | No internet connection | Check WiFi/ethernet |
+    | "Session expired" | Login timeout | Log in again |
+    | "Server error (500)" | Backend issue | Wait and retry, report if persists |
+
+    **General approach:**
+    1. Wait 30 seconds and refresh
+    2. Check your internet connection
+    3. Try a different browser
+    4. Report to support if the error persists for 10+ minutes
+  </Accordion>
+</AccordionGroup>
+
+## Real-Time Updates Issues
+
+<AccordionGroup>
+  <Accordion title="Updates not appearing in real-time">
+    **Check the connection status** in the page footer:
+    - **🟢 Connected** - Real-time should work
+    - **🟡 Reconnecting** - Updates will resume shortly
+    - **🔴 Offline** - Manual refresh needed
+
+    **If showing "Connected" but no updates:**
+    1. Refresh the page to re-establish the socket connection
+    2. Check if updates work in a different browser tab
+    3. Your firewall or VPN may be blocking WebSocket connections
+  </Accordion>
+
+  <Accordion title="Notifications not appearing">
+    **Browser notifications:**
+    1. Check browser notification permissions for the platform
+    2. Ensure browser notifications are enabled in your OS settings
+    3. Check "Do Not Disturb" isn't enabled
+
+    **In-app notifications:**
+    1. Check the notification bell icon in the header
+    2. Your notification preferences may be limiting what you see
+    3. Go to **Settings → Notifications** to review preferences
+  </Accordion>
+
+  <Accordion title="Data seems stale or outdated">
+    **Possible causes:**
+    - Viewing cached data from a previous session
+    - Sync jobs haven't run yet (financial data syncs daily at 2am)
+    - Filter is hiding new items
+
+    **Solutions:**
+    1. **Hard refresh** - Cmd/Ctrl + Shift + R
+    2. **Clear filters** - Click "Clear Filters" if available
+    3. **Check last sync time** - Visible in Settings → Integrations
+    4. **Wait for sync** - Financial data from Xero updates overnight
+  </Accordion>
+</AccordionGroup>
+
+## Form and Interaction Issues
+
+<AccordionGroup>
+  <Accordion title="Form won't submit / buttons not responding">
+    **Causes:**
+    - Validation error not visible (scroll up to see it)
+    - Double-click caused duplicate submission
+    - JavaScript error blocking the action
+
+    **Solutions:**
+    1. **Scroll to top of form** - Look for red error messages
+    2. **Check required fields** - Fields with * must be completed
+    3. **Wait for loading** - Button may show a spinner
+    4. **Refresh and try again** - If button is stuck
+    5. **Check browser console** - F12 → Console for errors
+  </Accordion>
+
+  <Accordion title="Dropdown menus not working">
+    **Causes:**
+    - Page not fully loaded
+    - JavaScript conflict with browser extension
+    - Mobile browser compatibility
+
+    **Solutions:**
+    1. Wait for the page to fully load (check loading indicators)
+    2. Disable browser extensions and retry
+    3. Try a different browser
+    4. On mobile, tap directly on the dropdown (not the label)
+  </Accordion>
+
+  <Accordion title="Search isn't finding results">
+    **Tips for better search:**
+    - Use partial matches: "smith" finds "John Smith KC"
+    - Search by lead ID if you have it
+    - Check you're searching the right entity type (leads vs clients)
+    - Clear existing filters that may conflict
+
+    **If search returns nothing when it should:**
+    1. Clear all filters
+    2. Check you're in the right section
+    3. Refresh the page and try again
+    4. Verify the item exists by browsing manually
+  </Accordion>
+</AccordionGroup>
+
+## Browser-Specific Issues
+
+<AccordionGroup>
+  <Accordion title="Issues in Safari">
+    **Common Safari issues:**
+    - Cookies blocked by Intelligent Tracking Prevention
+    - Third-party cookies required for auth
+
+    **Solutions:**
+    1. Go to Safari → Preferences → Privacy
+    2. Uncheck "Prevent cross-site tracking" temporarily
+    3. Or use Chrome/Firefox for the platform
+  </Accordion>
+
+  <Accordion title="Issues in Internet Explorer">
+    **Internet Explorer is not supported.**
+
+    Please use one of these browsers:
+    - Google Chrome (recommended)
+    - Mozilla Firefox
+    - Microsoft Edge
+    - Safari (macOS)
+  </Accordion>
+
+  <Accordion title="Mobile browser issues">
+    **For best mobile experience:**
+    - Use the latest Chrome or Safari
+    - Rotate to landscape for data tables
+    - Use the mobile-specific menu (hamburger icon)
+
+    **Known limitations:**
+    - Some complex forms work better on desktop
+    - File uploads may be limited by device
+    - Real-time updates may be delayed to save battery
+  </Accordion>
+</AccordionGroup>
+
+## When to Contact Support
+
+Contact [support@33cllaw.com](mailto:support@33cllaw.com) if:
+
+- ❌ Error persists after trying all troubleshooting steps
+- ❌ You see "500 Server Error" repeatedly
+- ❌ Data appears corrupted or missing
+- ❌ You're locked out of your account
+- ❌ Financial data doesn't match Xero for 48+ hours
+
+**Include in your support request:**
+1. Your email address
+2. Browser name and version
+3. Steps to reproduce the issue
+4. Screenshots of any error messages
+5. Approximate time when the issue occurred

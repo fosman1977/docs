@@ -3,128 +3,141 @@ title: "Creating New Leads"
 description: "Step-by-step guide to creating leads in the system"
 ---
 
-<Note>
-Step-by-step guide to creating leads in the system.
-</Note>
+This guide walks you through creating a new lead from a client enquiry. For bulk imports, see [CSV Import](/clerk/csv-import).
 
-## Before Creating a Lead
+## Before You Start
 
-Gather the following information:
+Gather the following information from the client enquiry:
 
-- Client/instructing party details
-- Matter description
-- Practice area and jurisdiction
-- Estimated value and timeframe
-- Preferred barrister seniority level
-- Source opportunity (if from an event or BD activity)
-- Any special requirements or conflicts
+| Required | Optional |
+|----------|----------|
+| Client/instructing party name | Estimated fee value |
+| Matter title and description | Fee type (fixed/hourly) |
+| Practice area | Urgency level |
+| Jurisdiction | Preferred barrister seniority |
+| | Source opportunity (if from BD activity) |
 
-## Creating the Lead
+## The Lead Creation Form
+
+When you click **New Lead**, you'll see:
+
+```
+┌─── Create New Lead ─────────────────────────────────────────────┐
+│                                                                 │
+│  Basic Details                                                  │
+│  ├─ Title *                    [________________________]      │
+│  ├─ Description *              [________________________]      │
+│  ├─ Source *                   [Email        ▼]                │
+│  └─ Client *                   [Search or create... ▼]         │
+│                                                                 │
+│  Classification                                                 │
+│  ├─ Practice Area *            [Commercial Litigation ▼]       │
+│  ├─ Jurisdiction               [England & Wales    ▼]          │
+│  ├─ Urgency                    ○ Normal ○ Urgent ○ Critical    │
+│  └─ Seniority Preference       [Any           ▼]               │
+│                                                                 │
+│  Source (Optional)                                              │
+│  └─ From Opportunity           [Property Seminar 2026 ▼]       │
+│                                                                 │
+│  Financial (Optional)                                           │
+│  ├─ Estimated Value            [£ 50,000_____________]         │
+│  ├─ Fee Type                   [Fixed  ▼]                      │
+│  └─ Notes                      [________________________]      │
+│                                                                 │
+│                               [Cancel]  [Create Lead]           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Step-by-Step Instructions
 
 <Steps>
-  <Step title="Navigate to Leads">
-    Click "Leads" in the sidebar, then click "New Lead" button.
+  <Step title="Open the lead form">
+    Click **Leads** in the sidebar → **New Lead** button (top right).
   </Step>
-  <Step title="Enter Basic Details">
-    - **Title** - Clear, descriptive title for the matter
-    - **Description** - Detailed description of the work
-    - **Source** - How the enquiry came in (email, referral, etc.)
-    - **Client** - Select existing client or create new
-  </Step>
-  <Step title="Classification">
-    - **Practice Area** - Select the relevant area(s)
-    - **Jurisdiction** - Where the matter is based
-    - **Urgency** - Normal, Urgent, or Critical
-    - **Seniority Preference** - Preferred barrister experience level (see below)
-  </Step>
-  <Step title="Source Opportunity (Optional)">
-    If this lead originated from a business development opportunity or event, link it here:
-    - **Source Opportunity** - Select the opportunity/event that generated this lead
+  <Step title="Enter a clear title">
+    Use format: **[Type] - [Client/Party Name]**
 
-    This creates an audit trail connecting BD activities to actual instructions.
+    **Good:** "Commercial Dispute - ABC Corporation"
+    **Avoid:** "New matter" (too vague)
   </Step>
-  <Step title="Financial Details">
-    - **Estimated Value** - Expected fee value
-    - **Fee Type** - Fixed, hourly, or TBC
-    - **Notes** - Any fee-related notes
+  <Step title="Write a detailed description">
+    Include: nature of work, key parties, relevant dates, deadlines, and any conflicts to check. More detail = better AI suggestions.
   </Step>
-  <Step title="Save">
-    Click "Create Lead" to save. The lead will be created with "Created" status.
+  <Step title="Select the source">
+    How did the enquiry reach chambers? (Email, Phone, Referral, Direct, Website, Event)
+  </Step>
+  <Step title="Select or create client">
+    Search existing clients or click **Create New Client** if not found.
+  </Step>
+  <Step title="Choose practice area and classification">
+    - **Practice Area** - The AI uses this for barrister matching
+    - **Jurisdiction** - Where the matter is based
+    - **Urgency** - Normal (48hrs), Urgent (24hrs), or Critical (same-day)
+    - **Seniority Preference** - Filter suggestions by experience level (see below)
+  </Step>
+  <Step title="Link source opportunity (optional)">
+    If this lead originated from a BD activity or event, select it from the dropdown. This tracks ROI on business development.
+  </Step>
+  <Step title="Add financial details (optional)">
+    Estimated value and fee type help with prioritisation and barrister matching.
+  </Step>
+  <Step title="Create the lead">
+    Click **Create Lead**. Status will be "Created".
   </Step>
 </Steps>
 
 ## Seniority Preference
 
-The seniority preference field helps filter AI suggestions to match client requirements or case complexity:
+The seniority preference field filters AI suggestions to match client requirements:
 
 | Option | Description | Typical Use Case |
 |--------|-------------|------------------|
 | **Any** | All eligible barristers considered | Default - let AI determine best match |
-| **KC/Silk** | Only King's Counsel | High-value, complex matters requiring senior advocacy |
-| **Senior Junior** | 10+ years call (not Silk) | Substantial matters needing significant experience |
-| **Junior** | Under 10 years call | Routine matters, cost-sensitive clients, development opportunities |
+| **KC/Silk** | Only King's Counsel | High-value, complex matters |
+| **Senior Junior** | 10+ years call (not Silk) | Substantial matters needing experience |
+| **Junior** | Under 10 years call | Routine matters, cost-sensitive clients |
 
 <Tip>
-Setting seniority preference filters both AI suggestions and the manual barrister selection list, making it faster to find appropriate candidates.
+Setting seniority preference filters both AI suggestions and the manual barrister selection list.
 </Tip>
-
-### How Seniority Affects Matching
-
-When you set a seniority preference:
-
-1. **AI Suggestions** - Only barristers matching the criteria are considered
-2. **Manual Selection** - The barrister list is pre-filtered
-3. **Match Scoring** - Barristers receive bonus points for matching the requested seniority
 
 ## Source Opportunity Tracking
 
 Linking leads to their source opportunity provides valuable business intelligence:
 
-### Benefits
-
 - **Attribution** - Track which BD activities generate instructions
-- **ROI Analysis** - Measure return on event attendance and marketing
+- **ROI Analysis** - Measure return on event attendance
 - **Pipeline Visibility** - See the journey from opportunity to converted work
-- **Reporting** - Generate reports on lead sources and conversion rates
 
-### How It Appears
+When a lead is linked to a source opportunity, a **"From: [Opportunity Title]"** badge displays on the lead card.
 
-When a lead is linked to a source opportunity:
+## What Happens Next
 
-- A **"From: [Opportunity Title]"** badge displays on the lead card
-- The opportunity appears in the lead's detail page
-- Reports can filter by source opportunity
+After creation:
 
-<Info>
-You can link a lead to a source opportunity at creation or edit it later from the lead details page.
-</Info>
+1. **Deduplication check** - System looks for similar existing leads
+2. **AI suggestions generated** - Recommends suitable barristers (filtered by seniority)
+3. **Added to dashboard** - Appears in your "Action Required" widget
 
-## After Creation
-
-The system will:
-
-- Generate AI barrister suggestions (filtered by seniority preference)
-- Show the lead in your pending items
-- Display the source opportunity link if set
-- Allow you to proceed with assignment
+Proceed to [assign barristers](/clerk/assigning-leads) to the lead.
 
 <Tip>
-The more detail you provide, the better the AI suggestions will be. Practice area, jurisdiction, and seniority preference are the most important factors for accurate matching.
+Leads with detailed descriptions receive more accurate AI suggestions. Practice area, jurisdiction, and seniority preference are the most important factors for matching.
 </Tip>
 
-## Best Practices
+## Related Guides
 
 <CardGroup cols={2}>
-  <Card title="Set Seniority Early" icon="user-graduate">
-    If the client has specific requirements, set seniority preference to get relevant suggestions immediately
+  <Card title="Assigning Leads" icon="arrow-right" href="/clerk/assigning-leads">
+    Assign barristers to leads
   </Card>
-  <Card title="Link BD Activities" icon="link">
-    Always link leads from events or marketing to track ROI on business development
+  <Card title="AI Suggestions" icon="arrow-right" href="/clerk/ai-suggestions">
+    Understanding AI recommendations
   </Card>
-  <Card title="Be Specific" icon="file-lines">
-    Detailed descriptions help AI match the right barristers to the work
+  <Card title="Lead Details" icon="arrow-right" href="/clerk/lead-details">
+    Managing lead information
   </Card>
-  <Card title="Check Conflicts" icon="triangle-exclamation">
-    Review any potential conflicts before creating the lead
+  <Card title="CSV Import" icon="arrow-right" href="/clerk/csv-import">
+    Bulk import leads
   </Card>
 </CardGroup>

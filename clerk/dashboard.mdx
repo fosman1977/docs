@@ -3,58 +3,127 @@ title: "Clerk Dashboard"
 description: "Your central hub for managing chambers operations"
 ---
 
-<Note>
-Your central hub for managing chambers operations.
-</Note>
+The clerk dashboard shows everything you need to manage leads, monitor barristers, and track chambers operations at a glance.
 
-## Dashboard Overview
+## What You'll See
 
-The clerk dashboard provides a comprehensive view of current operations and pending tasks.
+When you log in, your dashboard displays:
 
-## Key Widgets
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Clerk Dashboard                              🔔 Notifications  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─── Leads Summary ───┐  ┌─── Action Required ─────────────┐  │
+│  │ Total: 47           │  │ ⚠️ 3 leads unassigned            │  │
+│  │ Unassigned: 3       │  │ ⏳ 5 awaiting barrister response │  │
+│  │ Pending: 12         │  │ 🔴 2 multi-acceptance conflicts  │  │
+│  │ Active: 28          │  │ 📋 1 stale lead (>7 days)        │  │
+│  │ Conversion: 68%     │  └──────────────────────────────────┘  │
+│  └─────────────────────┘                                        │
+│                                                                 │
+│  ┌─── Today's Activity ─────────────────────────────────────┐   │
+│  │ Created: 4  │  Assigned: 6  │  Accepted: 3  │  Closed: 2 │   │
+│  └───────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─── Barrister Availability ──┐  ┌─── Upcoming ──────────┐    │
+│  │ 🟢 Available (12)           │  │ 📅 Property Seminar   │    │
+│  │ 🟡 Partially busy (8)       │  │    Tomorrow, 2pm      │    │
+│  │ 🔴 Fully booked (4)         │  │ 📅 Client Meeting     │    │
+│  │ ⚪ No data (3)              │  │    Friday, 10am       │    │
+│  └─────────────────────────────┘  └───────────────────────┘    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-### Pending Leads
+## Dashboard Widgets Explained
 
-Leads awaiting action:
-- New leads to assign
-- Leads pending barrister response
-- Multiple acceptances needing resolution
+### Leads Summary
 
-### Today's Activity
+| Metric | What It Shows |
+|--------|---------------|
+| **Total** | All leads in the system (excluding archived) |
+| **Unassigned** | Leads created but not yet assigned to any barrister |
+| **Pending** | Leads assigned but awaiting barrister response |
+| **Active** | Leads accepted and being worked on |
+| **Conversion Rate** | Percentage of leads that became instructions (last 30 days) |
 
-Summary of leads created, assigned, accepted, and converted today.
+<Tip>
+Click any metric to jump directly to a filtered lead list.
+</Tip>
+
+### Action Required
+
+This widget highlights leads needing your immediate attention:
+
+| Alert Type | Meaning | Action Needed |
+|------------|---------|---------------|
+| **Unassigned** | Lead has no barristers assigned | Assign at least one barrister |
+| **Awaiting Response** | Assigned but no barrister has responded | Follow up or reassign if urgent |
+| **Multi-Acceptance** | Two or more barristers accepted | Resolve conflict - select one |
+| **Stale Lead** | No activity for 7+ days (varies by priority) | Update status or archive |
 
 ### Barrister Availability
 
-Quick view of which barristers are available or busy. Identify quiet periods for proactive assignment.
+Shows real-time availability based on calendar data:
 
-### Upcoming Opportunities
+- **🟢 Available** - Less than 50% utilisation this week
+- **🟡 Partially busy** - 50-80% utilisation
+- **🔴 Fully booked** - Over 80% utilisation
+- **⚪ No data** - Calendar not connected or no events
 
-Business development events and activities coming up.
+Click a barrister's name to view their full profile and current workload.
 
-### Performance Metrics
+### Today's Activity
 
-Key metrics including conversion rates, response times, and lead volumes.
+Live counters of lead movements today:
+
+- **Created** - New leads entered into the system
+- **Assigned** - Leads assigned to barristers
+- **Accepted** - Leads accepted by barristers
+- **Closed** - Leads marked as won, lost, or archived
 
 ## Quick Actions
 
-From the dashboard you can quickly:
-
 <CardGroup cols={2}>
   <Card title="Create Lead" icon="plus" href="/clerk/creating-leads">
-    Start a new lead
+    Open the new lead form with all required fields
   </Card>
   <Card title="View Pending" icon="clock" href="/clerk/my-leads">
-    See leads needing attention
+    See all leads you've created that need attention
   </Card>
   <Card title="Access CRM" icon="users" href="/clerk/crm-overview">
-    View client information
+    Search and manage client/contact records
   </Card>
   <Card title="Generate Reports" icon="chart-bar" href="/clerk/report-generation">
-    Create reports
+    Create performance and practice area reports
   </Card>
 </CardGroup>
 
+## Real-Time Updates
+
+The dashboard updates automatically via WebSocket connection:
+
+- **Lead status changes** appear within seconds
+- **New lead assignments** trigger a notification badge
+- **Barrister responses** update the pending count immediately
+
+The connection status indicator in the footer shows:
+- **🟢 Connected** - Real-time updates active
+- **🟡 Reconnecting** - Temporary connection loss
+- **🔴 Offline** - Working with cached data
+
 <Info>
-The dashboard refreshes automatically. Click refresh for immediate updates.
+Click the refresh icon (↻) in the header to force an immediate data refresh if needed.
 </Info>
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Creating Leads" icon="arrow-right" href="/clerk/creating-leads">
+    Step-by-step lead creation
+  </Card>
+  <Card title="Assigning Leads" icon="arrow-right" href="/clerk/assigning-leads">
+    How to assign barristers
+  </Card>
+</CardGroup>

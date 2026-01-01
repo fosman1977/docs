@@ -1,0 +1,649 @@
+---
+title: "API Reference"
+description: "Complete reference for all Chambers Platform API endpoints"
+---
+
+This reference documents all available API endpoints, request/response formats, and error codes.
+
+## Authentication
+
+All API requests require authentication via session cookie. Include the `credentials: 'include'` option in fetch requests.
+
+```typescript
+const response = await fetch('/api/leads', {
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+## Base URL
+
+All endpoints are relative to your platform domain:
+
+- **Production:** `https://chambers-platform.vercel.app`
+- **Development:** `http://localhost:5173`
+
+---
+
+## Leads API
+
+### GET /api/leads
+
+List all leads with optional filtering.
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `status` | string | Filter by status: `created`, `assigned`, `accepted`, `instructed`, `lost`, `archived` |
+| `practiceArea` | string | Filter by practice area ID |
+| `barristerId` | string | Filter by assigned barrister |
+| `search` | string | Full-text search on title and description |
+| `page` | number | Page number (default: 1) |
+| `limit` | number | Results per page (default: 20, max: 100) |
+
+**Request:**
+```bash
+GET /api/leads?status=assigned&practiceArea=commercial-litigation&page=1&limit=20
+```
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "title": "Commercial Dispute - ABC Corp",
+      "description": "Contract dispute regarding...",
+      "status": "assigned",
+      "priority": "high",
+      "practiceArea": {
+        "id": "commercial-litigation",
+        "name": "Commercial Litigation"
+      },
+      "client": {
+        "id": "client-uuid",
+        "name": "ABC Corporation"
+      },
+      "estimatedValue": 50000,
+      "createdAt": "2026-01-15T10:30:00Z",
+      "createdBy": {
+        "id": "user-uuid",
+        "name": "Jane Clerk"
+      },
+      "assignments": [
+        {
+          "barristerId": "barrister-uuid",
+          "barristerName": "John Smith KC",
+          "assignedAt": "2026-01-15T11:00:00Z",
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 47,
+    "totalPages": 3
+  }
+}
+```
+
+**Error Responses:**
+
+| Status | Error | Description |
+|--------|-------|-------------|
+| 401 | `unauthorized` | Not logged in |
+| 403 | `forbidden` | Insufficient permissions |
+| 400 | `invalid_params` | Invalid query parameters |
+
+---
+
+### GET /api/leads/:id
+
+Get a single lead by ID.
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Commercial Dispute - ABC Corp",
+    "description": "Contract dispute regarding service agreement...",
+    "status": "assigned",
+    "priority": "high",
+    "urgency": "normal",
+    "practiceArea": {
+      "id": "commercial-litigation",
+      "name": "Commercial Litigation"
+    },
+    "jurisdiction": "England & Wales",
+    "client": {
+      "id": "client-uuid",
+      "name": "ABC Corporation",
+      "contactEmail": "legal@abccorp.com"
+    },
+    "estimatedValue": 50000,
+    "feeType": "fixed",
+    "source": "referral",
+    "sourceDetails": "Referred by Smith & Partners LLP",
+    "createdAt": "2026-01-15T10:30:00Z",
+    "updatedAt": "2026-01-15T11:00:00Z",
+    "createdBy": {
+      "id": "user-uuid",
+      "name": "Jane Clerk"
+    },
+    "assignments": [
+      {
+        "id": "assignment-uuid",
+        "barristerId": "barrister-uuid",
+        "barristerName": "John Smith KC",
+        "assignedAt": "2026-01-15T11:00:00Z",
+        "status": "pending",
+        "notes": null
+      }
+    ],
+    "notes": [
+      {
+        "id": "note-uuid",
+        "content": "Client prefers calls after 3pm",
+        "createdAt": "2026-01-15T10:35:00Z",
+        "createdBy": "Jane Clerk"
+      }
+    ],
+    "activity": [
+      {
+        "action": "created",
+        "timestamp": "2026-01-15T10:30:00Z",
+        "user": "Jane Clerk"
+      },
+      {
+        "action": "assigned",
+        "timestamp": "2026-01-15T11:00:00Z",
+        "user": "Jane Clerk",
+        "details": "Assigned to John Smith KC"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### POST /api/leads
+
+Create a new lead.
+
+**Request:**
+```json
+{
+  "title": "Employment Tribunal - Smith v Jones Ltd",
+  "description": "Unfair dismissal claim. Employee was...",
+  "practiceAreaId": "employment",
+  "jurisdiction": "England & Wales",
+  "clientId": "client-uuid",
+  "priority": "normal",
+  "urgency": "normal",
+  "estimatedValue": 25000,
+  "feeType": "hourly",
+  "source": "direct",
+  "sourceDetails": "Client called chambers directly"
+}
+```
+
+**Response (201):**
+```json
+{
+  "data": {
+    "id": "new-lead-uuid",
+    "title": "Employment Tribunal - Smith v Jones Ltd",
+    "status": "created",
+    "createdAt": "2026-01-15T14:00:00Z"
+  },
+  "message": "Lead created successfully"
+}
+```
+
+**Error Responses:**
+
+| Status | Error | Description |
+|--------|-------|-------------|
+| 400 | `validation_error` | Missing required fields |
+| 400 | `duplicate_detected` | Similar lead already exists |
+| 403 | `forbidden` | Only clerks can create leads |
+
+---
+
+### PATCH /api/leads/:id
+
+Update a lead.
+
+**Request:**
+```json
+{
+  "title": "Updated Title",
+  "priority": "high",
+  "estimatedValue": 75000
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "lead-uuid",
+    "title": "Updated Title",
+    "updatedAt": "2026-01-15T15:00:00Z"
+  },
+  "message": "Lead updated successfully"
+}
+```
+
+---
+
+### POST /api/leads/:id/assign
+
+Assign barristers to a lead.
+
+**Request:**
+```json
+{
+  "barristerIds": ["barrister-uuid-1", "barrister-uuid-2"],
+  "notes": "Both have relevant experience in this area"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "leadId": "lead-uuid",
+    "assignments": [
+      {
+        "barristerId": "barrister-uuid-1",
+        "status": "pending",
+        "notified": true
+      },
+      {
+        "barristerId": "barrister-uuid-2",
+        "status": "pending",
+        "notified": true
+      }
+    ]
+  },
+  "message": "Barristers assigned and notified"
+}
+```
+
+---
+
+### POST /api/leads/:id/respond
+
+Accept or reject a lead assignment (barrister only).
+
+**Request:**
+```json
+{
+  "response": "accept",
+  "notes": "Happy to take this on"
+}
+```
+
+Or:
+```json
+{
+  "response": "reject",
+  "reason": "conflict_of_interest",
+  "notes": "I've previously acted for the defendant"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "leadId": "lead-uuid",
+    "status": "accepted",
+    "respondedAt": "2026-01-15T16:00:00Z"
+  },
+  "message": "Response recorded"
+}
+```
+
+**Rejection Reasons:**
+
+| Code | Description |
+|------|-------------|
+| `conflict_of_interest` | COI with parties |
+| `capacity` | Not enough time |
+| `expertise` | Not the right practice area |
+| `other` | Other reason (specify in notes) |
+
+---
+
+## Barristers API
+
+### GET /api/barristers
+
+List all barristers with availability data.
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": "barrister-uuid",
+      "name": "John Smith KC",
+      "email": "jsmith@chambers.com",
+      "seniority": "KC",
+      "practiceAreas": ["Commercial Litigation", "Banking"],
+      "availability": {
+        "status": "available",
+        "utilisation": 45,
+        "nextAvailable": null
+      },
+      "metrics": {
+        "leadsThisMonth": 8,
+        "acceptanceRate": 75,
+        "avgResponseHours": 4.2
+      }
+    }
+  ]
+}
+```
+
+---
+
+### GET /api/barristers/:id
+
+Get barrister profile and current workload.
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "barrister-uuid",
+    "name": "John Smith KC",
+    "email": "jsmith@chambers.com",
+    "phone": "+44 20 7123 4567",
+    "seniority": "KC",
+    "callYear": 1995,
+    "practiceAreas": [
+      { "id": "commercial-litigation", "name": "Commercial Litigation", "primary": true },
+      { "id": "banking", "name": "Banking & Finance", "primary": false }
+    ],
+    "bio": "John specialises in complex commercial disputes...",
+    "availability": {
+      "status": "available",
+      "utilisation": 45,
+      "weeklyBreakdown": [
+        { "day": "Monday", "utilisation": 80 },
+        { "day": "Tuesday", "utilisation": 40 },
+        { "day": "Wednesday", "utilisation": 20 },
+        { "day": "Thursday", "utilisation": 60 },
+        { "day": "Friday", "utilisation": 25 }
+      ]
+    },
+    "currentLeads": [
+      {
+        "id": "lead-uuid",
+        "title": "Commercial Dispute - ABC Corp",
+        "status": "accepted"
+      }
+    ],
+    "financials": {
+      "ytdIncome": 187500,
+      "workDone": 42300,
+      "agedDebt": 12100,
+      "contributionTier": "14%"
+    }
+  }
+}
+```
+
+---
+
+## Financial API
+
+### GET /api/financial/summary
+
+Get chambers-wide financial summary (management only).
+
+**Response (200):**
+```json
+{
+  "data": {
+    "period": "2026",
+    "revenue": {
+      "ytd": 2450000,
+      "thisMonth": 185000,
+      "trend": [180000, 195000, 175000, 190000, 200000, 185000]
+    },
+    "workDone": {
+      "total": 520000,
+      "byPracticeArea": [
+        { "area": "Commercial Litigation", "value": 280000 },
+        { "area": "Employment", "value": 140000 },
+        { "area": "Property", "value": 100000 }
+      ]
+    },
+    "agedDebt": {
+      "total": 145000,
+      "buckets": {
+        "current": 45000,
+        "30days": 35000,
+        "60days": 28000,
+        "90days": 22000,
+        "over90": 15000
+      }
+    },
+    "cashReserve": {
+      "current": 380000,
+      "target": 400000,
+      "status": "healthy"
+    }
+  }
+}
+```
+
+---
+
+### GET /api/financial/xero/status
+
+Check Xero integration status.
+
+**Response (200):**
+```json
+{
+  "connected": true,
+  "organisation": "33 Chancery Lane LLP",
+  "lastSync": "2026-01-15T02:00:00Z",
+  "nextSync": "2026-01-16T02:00:00Z",
+  "tokenExpiresAt": "2026-01-15T12:30:00Z",
+  "status": "healthy"
+}
+```
+
+---
+
+## AI API
+
+### GET /api/ai/chambers-insights
+
+Get AI-generated strategic insights (management only).
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `year` | number | Year for analysis (default: current) |
+| `refresh` | boolean | Force regeneration (default: false) |
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "financialRisk": {
+      "severity": "moderate",
+      "score": 45,
+      "alerts": [
+        {
+          "type": "aged_debt",
+          "message": "Aged debt over 90 days has increased 15% this quarter",
+          "recommendation": "Review collection processes for overdue accounts"
+        }
+      ]
+    },
+    "performanceTrends": {
+      "growing": [
+        { "area": "Employment", "growth": 23, "reason": "Increased tribunal activity" }
+      ],
+      "declining": [
+        { "area": "Property", "decline": 8, "reason": "Market slowdown" }
+      ]
+    },
+    "opportunities": [
+      {
+        "type": "market",
+        "description": "Upcoming changes to employment law may drive increased tribunal work",
+        "recommendation": "Consider hosting CPD session for local solicitors"
+      }
+    ],
+    "executiveSummary": "Chambers is performing well overall with moderate financial risk...",
+    "generatedAt": "2026-01-15T08:00:00Z",
+    "model": "claude-sonnet-4"
+  },
+  "cached": true,
+  "expiresAt": "2026-01-16T08:00:00Z"
+}
+```
+
+---
+
+### POST /api/ai/suggestions
+
+Get AI barrister suggestions for a lead.
+
+**Request:**
+```json
+{
+  "leadId": "lead-uuid"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "suggestions": [
+      {
+        "barristerId": "barrister-uuid-1",
+        "barristerName": "John Smith KC",
+        "score": 0.92,
+        "rank": 1,
+        "reasons": [
+          "Primary practice area matches: Commercial Litigation",
+          "15 years experience in contract disputes",
+          "Currently has capacity (45% utilisation)"
+        ],
+        "availability": "available"
+      },
+      {
+        "barristerId": "barrister-uuid-2",
+        "barristerName": "Sarah Jones",
+        "score": 0.78,
+        "rank": 2,
+        "reasons": [
+          "Secondary practice area matches",
+          "Recent experience with similar clients",
+          "Good response time (avg 2.3 hours)"
+        ],
+        "availability": "partially_busy"
+      }
+    ],
+    "processingTime": 450,
+    "model": "gpt-4o-mini"
+  }
+}
+```
+
+---
+
+## Common Error Responses
+
+All endpoints may return these errors:
+
+```json
+{
+  "error": {
+    "code": "error_code",
+    "message": "Human-readable error message",
+    "details": {}
+  }
+}
+```
+
+| Status | Code | Description |
+|--------|------|-------------|
+| 400 | `validation_error` | Invalid request body or parameters |
+| 401 | `unauthorized` | Not authenticated |
+| 403 | `forbidden` | Authenticated but lacks permission |
+| 404 | `not_found` | Resource doesn't exist |
+| 409 | `conflict` | Resource state conflict |
+| 429 | `rate_limited` | Too many requests |
+| 500 | `internal_error` | Server error |
+
+---
+
+## Rate Limits
+
+| Endpoint Category | Limit |
+|-------------------|-------|
+| Standard API | 1000 requests/minute per user |
+| AI endpoints | 100 requests/day |
+| Financial sync | 10 requests/hour |
+| Search | 60 requests/minute |
+
+Rate limit headers are included in responses:
+```
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 987
+X-RateLimit-Reset: 1704067200
+```
+
+---
+
+## Webhooks (Outbound)
+
+The platform can send webhooks to external systems. Configure at **Settings → Integrations → Webhooks**.
+
+### Available Events
+
+| Event | Trigger |
+|-------|---------|
+| `lead.created` | New lead created |
+| `lead.assigned` | Barrister assigned to lead |
+| `lead.accepted` | Barrister accepted lead |
+| `lead.instructed` | Lead converted to instruction |
+| `opportunity.created` | New opportunity created |
+
+### Webhook Payload
+
+```json
+{
+  "event": "lead.created",
+  "timestamp": "2026-01-15T10:30:00Z",
+  "data": {
+    "id": "lead-uuid",
+    "title": "Commercial Dispute - ABC Corp",
+    "status": "created"
+  },
+  "signature": "sha256=abc123..."
+}
+```
+
+Verify the signature using your webhook secret and HMAC-SHA256.

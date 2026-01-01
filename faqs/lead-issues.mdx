@@ -1,0 +1,229 @@
+---
+title: "Lead Management Issues"
+description: "Troubleshooting common lead workflow problems"
+---
+
+Solutions for common issues with creating, assigning, and managing leads.
+
+## Lead Creation Issues
+
+<AccordionGroup>
+  <Accordion title="I can't create a new lead">
+    **Possible causes:**
+    - You don't have clerk or admin permissions
+    - Required fields are missing (title, practice area, client)
+    - Browser session has expired
+
+    **Solutions:**
+    1. Check your role in the header - you need "Clerk" or higher
+    2. Ensure all required fields (marked with *) are completed
+    3. Refresh the page and try again
+    4. If the issue persists, log out and log back in
+  </Accordion>
+
+  <Accordion title="Client dropdown is empty">
+    **Cause:** No clients exist in the system yet.
+
+    **Solution:**
+    1. Click "Create New Client" in the client dropdown
+    2. Or navigate to **CRM → Clients → New Client** first
+    3. Then return to lead creation and select the new client
+  </Accordion>
+
+  <Accordion title="Practice area is missing from the list">
+    **Cause:** Practice areas are configured by administrators.
+
+    **Solution:**
+    1. Contact your administrator to add the practice area
+    2. Or select the closest matching practice area and note the actual area in the description
+    3. Administrators can add practice areas at **Settings → Practice Areas**
+  </Accordion>
+
+  <Accordion title="Lead created but not showing in list">
+    **Possible causes:**
+    - Active filters are hiding the lead
+    - Page needs refreshing
+    - Lead was archived immediately
+
+    **Solutions:**
+    1. Click "Clear Filters" above the lead list
+    2. Check the "All" tab instead of "My Leads"
+    3. Use the search box to find the lead by title
+    4. Refresh the page with Cmd/Ctrl + R
+  </Accordion>
+</AccordionGroup>
+
+## Lead Assignment Issues
+
+<AccordionGroup>
+  <Accordion title="AI suggestions not appearing">
+    **Possible causes:**
+    - AI service is temporarily unavailable
+    - Lead lacks sufficient detail for matching
+    - OpenAI API key is not configured
+
+    **Solutions:**
+    1. Wait 30 seconds and refresh the page
+    2. Add more detail to the lead description and practice area
+    3. Proceed with manual barrister selection
+    4. If the issue persists, contact your administrator
+
+    **Fallback:** You can always manually select barristers using the assignment dialog.
+  </Accordion>
+
+  <Accordion title="Barrister I need isn't in the suggestion list">
+    **Cause:** The AI may not have matched them based on practice areas or availability.
+
+    **Solution:**
+    1. Click "Show All Barristers" in the assignment dialog
+    2. Use the search box to find the specific barrister
+    3. Select them manually - AI suggestions are recommendations, not requirements
+  </Accordion>
+
+  <Accordion title="Can't assign lead - no barristers available">
+    **Possible causes:**
+    - All barristers are showing as fully booked
+    - No barristers have the matching practice area
+    - Calendar data hasn't synced
+
+    **Solutions:**
+    1. Check barrister availability on the **Utilisation** page
+    2. Assign anyway if the barrister can make time (availability is advisory)
+    3. Contact the barrister directly to confirm capacity
+    4. If calendar data seems stale, wait for the next sync (daily at 2am)
+  </Accordion>
+
+  <Accordion title="Lead stuck in 'Assigned' status">
+    **Cause:** The barrister(s) haven't responded yet.
+
+    **Solution:**
+    1. Check how long since assignment - barristers have 48 hours to respond
+    2. View the lead detail to see who was assigned
+    3. Send a reminder via the platform messaging or email directly
+    4. Consider reassigning if the lead is urgent
+  </Accordion>
+</AccordionGroup>
+
+## Barrister Response Issues
+
+<AccordionGroup>
+  <Accordion title="I accepted a lead but it still shows as pending (Barrister)">
+    **Possible causes:**
+    - Multiple barristers were assigned and accepted (conflict)
+    - Network error during acceptance
+    - Page showing cached data
+
+    **Solutions:**
+    1. Refresh the page to see the current status
+    2. If you see "Multi-Acceptance Conflict", the clerk will resolve it
+    3. Check for a notification confirming your acceptance
+    4. If unsure, contact your clerk
+  </Accordion>
+
+  <Accordion title="Can't accept or reject a lead">
+    **Possible causes:**
+    - Lead has already been accepted by another barrister
+    - Lead has been withdrawn by the clerk
+    - Your session has expired
+
+    **Solutions:**
+    1. Refresh the page to see current status
+    2. If the lead shows "Instructed" or "Closed", another barrister was selected
+    3. Log out and log back in if buttons are unresponsive
+  </Accordion>
+
+  <Accordion title="Multi-acceptance conflict">
+    **What happened:** Two or more barristers accepted the same lead.
+
+    **What to do:**
+    - **Barristers:** No action needed - the clerk will select who proceeds
+    - **Clerks:** Go to the lead detail → click "Resolve Conflict" → select the barrister who will proceed → the others will be notified
+
+    The resolution notification shows: "Another barrister has been selected for this lead."
+  </Accordion>
+</AccordionGroup>
+
+## Lead Status Issues
+
+<AccordionGroup>
+  <Accordion title="How do I close a lead?">
+    **To mark a lead as won (instructed):**
+    1. Open the lead detail
+    2. Click "Update Status"
+    3. Select "Instructed"
+    4. Add any notes about the instruction
+
+    **To mark a lead as lost:**
+    1. Open the lead detail
+    2. Click "Update Status"
+    3. Select "Lost" or "No Response"
+    4. Optionally add a reason
+
+    **To archive:**
+    1. Open the lead detail
+    2. Click the ⋮ menu
+    3. Select "Archive"
+  </Accordion>
+
+  <Accordion title="Can I reopen an archived lead?">
+    **Yes:**
+    1. Go to **Leads → All Leads**
+    2. Filter by "Archived"
+    3. Find the lead and open it
+    4. Click "Restore Lead"
+
+    The lead will return to its previous status.
+  </Accordion>
+
+  <Accordion title="Lead history is missing">
+    **Cause:** You may not have permission to view full history.
+
+    **Solution:**
+    1. Check you're viewing as Clerk or Management
+    2. Barristers can only see their own lead assignments
+    3. Full history is in the "Activity" tab of the lead detail
+  </Accordion>
+</AccordionGroup>
+
+## Data Issues
+
+<AccordionGroup>
+  <Accordion title="Duplicate leads in the system">
+    **Prevention:** The system checks for duplicates on import and manual creation.
+
+    **If duplicates exist:**
+    1. Open the duplicate lead
+    2. Click ⋮ menu → "Mark as Duplicate"
+    3. Select the original lead to link to
+    4. The duplicate will be archived but linked for reference
+
+    **Bulk cleanup:** Contact your administrator for bulk deduplication.
+  </Accordion>
+
+  <Accordion title="Lead data was lost after editing">
+    **Possible causes:**
+    - Browser closed before save completed
+    - Network error during save
+    - Another user edited simultaneously
+
+    **Solutions:**
+    1. Check the Activity tab - edits are logged there
+    2. Restore from activity log if available
+    3. Re-enter the lost data
+
+    **Prevention:** The platform auto-saves drafts. Ensure you see "Saved" confirmation before closing.
+  </Accordion>
+</AccordionGroup>
+
+## Still Having Issues?
+
+If your problem isn't listed above:
+
+1. **Check the status page** - System issues are posted there
+2. **Clear browser cache** - Cmd/Ctrl + Shift + Delete
+3. **Try a different browser** - Chrome, Firefox, Safari, or Edge
+4. **Contact support** - Email [support@33cllaw.com](mailto:support@33cllaw.com) with:
+   - Your email address
+   - Lead ID (if applicable) - visible in the URL
+   - Screenshots of any error messages
+   - Steps to reproduce the issue

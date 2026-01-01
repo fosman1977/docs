@@ -3,52 +3,126 @@ title: "Your Dashboard"
 description: "Understanding your personalised barrister dashboard"
 ---
 
-<Note>
-Understanding your personalised barrister dashboard.
-</Note>
+Your dashboard shows your pending actions, performance metrics, and upcoming work - everything you need to manage your practice at a glance.
 
-## Dashboard Overview
+## What You'll See
 
-Your dashboard is your central hub, showing key metrics and actions at a glance.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Good morning, Sarah                          🔔 2 Notifications│
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─── Action Required ──────────────────────────────────────┐   │
+│  │ 🔴 2 leads awaiting your response                        │   │
+│  │    • Commercial dispute - ABC Corp (urgent)              │   │
+│  │    • Employment tribunal - Smith v Jones                 │   │
+│  │ 📋 1 opportunity invitation pending                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                 │
+│  ┌─── Your Performance ─────┐  ┌─── This Month ───────────┐    │
+│  │ YTD Income    £187,500   │  │ Leads Received    8      │    │
+│  │ Work Done     £42,300    │  │ Leads Accepted    6      │    │
+│  │ Aged Debt     £12,100    │  │ Acceptance Rate   75%    │    │
+│  │ Utilisation   72%  ████░ │  │ Avg Response      4.2hrs │    │
+│  │ Engagement    8.4/10     │  │ Instructions      3      │    │
+│  └──────────────────────────┘  └───────────────────────────┘   │
+│                                                                 │
+│  ┌─── Billing Trend (6 months) ─────────────────────────────┐   │
+│  │     ▄                                                     │   │
+│  │   ▄ █ ▄   ▄                                               │   │
+│  │ ▄ █ █ █ ▄ █                                               │   │
+│  │ Jul Aug Sep Oct Nov Dec                                   │   │
+│  └───────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─── Upcoming This Week ───────────────────────────────────┐   │
+│  │ Tue 14 Jan  │  Hearing - High Court (ABC Corp)           │   │
+│  │ Thu 16 Jan  │  Conference - Property Seminar             │   │
+│  │ Fri 17 Jan  │  Deadline - Skeleton argument due          │   │
+│  └───────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-## Dashboard Sections
+## Dashboard Sections Explained
 
-### Pending Actions
+### Action Required
 
-The top section shows items requiring your attention:
+Items highlighted at the top need your immediate attention:
 
-- Leads awaiting your response (accept/reject)
-- Opportunity invitations pending response
-- Overdue follow-ups or tasks
-
-### Performance Metrics
-
-Key performance indicators include:
-
-| Metric | Description |
-|--------|-------------|
-| Lead acceptance rate | Percentage of leads you accept |
-| Opportunity participation rate | Your involvement in BD activities |
-| Current engagement score | Your overall engagement rating |
-| YTD billing figures | Year-to-date fees |
-| Utilisation percentage | How busy you are |
-
-### Upcoming Work
-
-See your upcoming hearings, deadlines, and scheduled matters for the next 7 days.
-
-### Recent Activity
-
-A timeline of recent actions and updates relevant to you.
-
-## Customising Your Dashboard
-
-Some widgets can be collapsed or rearranged. Click the settings icon on any widget to see options.
-
-## Refreshing Data
-
-Dashboard data refreshes automatically every few minutes. Click the refresh icon to update manually.
+| Item | What It Means | Your Action |
+|------|---------------|-------------|
+| **Lead awaiting response** | Clerk has assigned you a potential instruction | Accept or reject with optional notes |
+| **Opportunity invitation** | You're invited to a BD event/activity | Confirm or decline participation |
+| **Overdue follow-up** | A task assigned to you is past due | Complete or request extension |
 
 <Warning>
-The dashboard highlights items needing immediate attention in red or with alert badges.
+Leads marked **urgent** or **critical** appear with red highlighting. Aim to respond within 24 hours.
 </Warning>
+
+### Your Performance
+
+Real-time financial metrics from Xero integration:
+
+| Metric | What It Shows | Example |
+|--------|---------------|---------|
+| **YTD Income** | Gross fees received this calendar year | £187,500 |
+| **Work Done** | Value of work completed but not yet billed | £42,300 |
+| **Aged Debt** | Outstanding invoices owed to you | £12,100 |
+| **Utilisation** | Percentage of time marked as busy (from calendar) | 72% |
+| **Engagement** | Your chambers participation score (0-10) | 8.4/10 |
+
+<Tip>
+Click any metric to see a detailed breakdown. For example, clicking "Aged Debt" shows invoices by age bucket (30/60/90+ days).
+</Tip>
+
+### This Month Summary
+
+Your lead activity for the current calendar month:
+
+- **Leads Received** - How many leads you've been assigned
+- **Leads Accepted** - How many you've accepted
+- **Acceptance Rate** - Percentage of assigned leads you accept
+- **Avg Response Time** - Average time to respond to lead assignments
+- **Instructions** - Leads that converted to actual instructions
+
+### Billing Trend
+
+A 6-month sparkline chart showing your monthly billing pattern. Hover over any bar to see the exact figure. This helps you identify seasonal trends and compare against previous periods.
+
+### Upcoming This Week
+
+Your calendar events for the next 7 days, pulled from Microsoft 365:
+
+- Court hearings and trials
+- Conferences and meetings
+- Document deadlines
+- Opportunity events you've joined
+
+## Quick Actions
+
+From your dashboard, you can:
+
+<CardGroup cols={2}>
+  <Card title="View All Leads" icon="list" href="/barrister/understanding-leads">
+    See your complete lead history
+  </Card>
+  <Card title="Log Time Entry" icon="clock" href="/barrister/time-entry">
+    Record billable time worked
+  </Card>
+  <Card title="View Opportunities" icon="calendar" href="/barrister/understanding-opportunities">
+    Browse upcoming BD activities
+  </Card>
+  <Card title="Performance Details" icon="chart-line" href="/barrister/performance-metrics">
+    Deep dive into your metrics
+  </Card>
+</CardGroup>
+
+## Data Refresh
+
+- Dashboard data refreshes automatically every 5 minutes
+- Click the **↻** icon in the header for immediate refresh
+- Financial data syncs from Xero daily at 2am
+
+<Info>
+If you notice discrepancies in your financial figures, they may take up to 24 hours to reflect Xero updates. Contact your clerk if urgent.
+</Info>

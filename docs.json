@@ -279,6 +279,8 @@
             "group": "Troubleshooting",
             "pages": [
               "faqs/login-issues",
+              "faqs/lead-issues",
+              "faqs/performance-issues",
               "faqs/data-sync",
               "faqs/integration-errors"
             ]
@@ -299,7 +301,8 @@
           {
             "group": "Overview",
             "pages": [
-              "developers/overview"
+              "developers/overview",
+              "developers/api-reference"
             ]
           },
           {

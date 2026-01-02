@@ -21,8 +21,8 @@ The CRM module centralises client information:
   <Card title="Lead History" icon="clock-rotate-left">
     All leads and matters by client
   </Card>
-  <Card title="Activity Timeline" icon="timeline">
-    Complete interaction history
+  <Card title="Matter Linking" icon="link">
+    Link multiple clients to cases
   </Card>
 </CardGroup>
 
@@ -176,8 +176,31 @@ Client records include consent tracking:
 
 See [GDPR & Privacy](/management/gdpr-privacy) for more details.
 
+## Client-Matter Linking
+
+Clients can be linked to multiple cases, allowing you to track which clients are associated with which matters.
+
+### Key Features
+
+- **Multiple clients per case**: Link as many clients as needed to a single case
+- **Primary designation**: Mark one client as the primary client for each case
+- **Associated Matters view**: See all linked cases on the client detail page
+- **Automatic filtering**: Billing history excludes cases already shown in Associated Matters
+
+### How It Works
+
+1. **From Client Detail Page**: View all associated matters in the Matters tab
+2. **From Case Records**: Use the Linked Clients panel to add/remove clients
+
+<Tip>
+When a case already appears in a client's Associated Matters, it won't be duplicated in the Billing Case History section.
+</Tip>
+
+See [Case Records](/clerk/case-records) for details on linking clients to cases.
+
 ## Related Pages
 
 - [Client Details](/clerk/client-details) - Working with individual clients
+- [Case Records](/clerk/case-records) - Managing case records and linked clients
 - [Client-Barrister Mapping](/clerk/client-barrister-mapping) - Managing relationships
 - [CSV Import](/clerk/csv-import) - Importing client data

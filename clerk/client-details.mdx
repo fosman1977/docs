@@ -9,39 +9,131 @@ Understanding client profiles and available information.
 
 ## Client Profile
 
-Click on any client to view their full profile.
+Click on any client to view their full profile. The client detail page is organised into tabs for easy navigation.
 
-## Profile Sections
+## Quick Stats
 
-### Company Information
-- Company name
-- Industry
-- Size
-- Website
+At the top of the client profile, you'll see key metrics:
 
-### Contacts
-- Primary contact
+| Metric | Description |
+|--------|-------------|
+| Active Leads | Number of leads currently in progress |
+| Matters | Total matters/cases for this client |
+| Total Revenue | Lifetime revenue from this client |
+| Barristers | Number of barristers who have worked with this client |
+
+## Profile Tabs
+
+### Overview Tab
+
+View and edit basic client information:
+
+- Company name and legal name
+- Industry classification
+- Website and contact details
+- Client tier and status
+- Primary jurisdiction
+- Notes and tags
+
+### Contacts Tab
+
+Manage all contacts associated with this client:
+
+- Primary contact (marked with badge)
 - Additional contacts
-- Contact details
+- Contact details (email, phone, mobile)
+- Job titles and roles
+- Add, edit, or remove contacts
 
-### Engagement History
-- All leads from this client
-- Converted instructions
-- Total value
+### Matters Tab
 
-### Barrister Relationships
-- Which barristers have worked with them
-- Frequency of instructions
+View all cases and matters associated with this client:
 
-### Notes
-- Internal notes
-- Tags and categories
+<CardGroup cols={2}>
+  <Card title="Billing Case History" icon="receipt">
+    Historical billing records from the Lex system
+  </Card>
+  <Card title="Associated Matters" icon="briefcase">
+    Cases linked via the matter-clients system
+  </Card>
+</CardGroup>
+
+#### Associated Matters
+
+The Associated Matters section shows all cases linked to this client through the matter-clients system:
+
+| Field | Description |
+|-------|-------------|
+| Case Title | Name of the case (clickable link to case records) |
+| Case ID | Lex reference number (e.g., C2024-001) |
+| Barrister | Assigned barrister name |
+| Status | Active, Pending, Closed, or Archived |
+| Funding | Private, CPS, Government, CFA, or Legal Aid |
+| Practice Area | Type of legal work |
+| Role | Primary Client or Additional Client |
+
+<Tip>
+Each matter shows whether the client is the **Primary Client** or an **Additional Client**. Only one client can be the primary client for each case.
+</Tip>
+
+#### Filtering Duplicates
+
+If a case appears in both Billing Case History and Associated Matters, it will only show in Associated Matters to avoid confusion.
+
+### History Tab
+
+Complete billing and interaction history:
+
+- Billing records over time
+- Revenue by period
+- Invoice history
+
+### Relationships Tab
+
+View barrister relationships:
+
+- Which barristers have worked with this client
+- Total value by barrister
+- Last instruction date
+- Work history
 
 ## Actions
 
 From the client page you can:
 
-- Create a new lead for this client
-- View all past leads
-- Add notes
-- Update client information
+<Steps>
+  <Step title="Create Lead">
+    Click "Create Lead" to start a new lead for this client
+  </Step>
+  <Step title="View Past Leads">
+    Access all leads from the client in the Matters tab
+  </Step>
+  <Step title="Add Notes">
+    Record internal notes and observations
+  </Step>
+  <Step title="Edit Information">
+    Update client details and contacts
+  </Step>
+  <Step title="Generate AI Insights">
+    Get AI-powered analysis of the client relationship
+  </Step>
+</Steps>
+
+## Client-Matter Linking
+
+Clients can be linked to multiple cases/matters. This is managed from the case records page:
+
+1. Navigate to **Case Records**
+2. Select a case
+3. Use the **Linked Clients** panel to add or remove clients
+4. Set one client as the primary client if needed
+
+<Info>
+When you set a new primary client, any existing primary client is automatically changed to an additional client.
+</Info>
+
+## Related Pages
+
+- [CRM Overview](/clerk/crm-overview) - Client relationship management
+- [Client-Barrister Mapping](/clerk/client-barrister-mapping) - Managing relationships
+- [Case Records](/clerk/case-records) - Viewing and managing case records

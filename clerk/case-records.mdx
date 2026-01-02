@@ -4,7 +4,7 @@ description: "Tracking case history and records"
 ---
 
 <Note>
-View and manage case records and instruction history.
+View and manage case records, instruction history, and linked clients.
 </Note>
 
 ## What Are Case Records?
@@ -14,21 +14,112 @@ Case records track instructions after leads convert:
 - Barrister assignment
 - Key dates
 - Outcome
+- Linked clients
 
 ## Viewing Records
 
 Access from:
 - Lead details (after conversion)
-- Client profile
+- Client profile (Matters tab)
 - Barrister profile
+- Direct navigation to **Case Records** page
 
-## Information Tracked
+## Case Information
 
-- Matter reference
-- Client details
-- Assigned barrister
-- Value and billing
-- Status and outcome
+Each case record displays:
+
+| Field | Description |
+|-------|-------------|
+| Case Title | Name of the matter |
+| Lex Case ID | Reference number from the Lex system |
+| Barrister | Assigned barrister |
+| Status | Active, Pending, Closed, or Archived |
+| Funding | Private, CPS, Government, CFA, or Legal Aid |
+| Practice Area | Type of legal work |
+| Jurisdiction | Where the work is conducted |
+| Opened Date | When the case was opened |
+| Closed Date | When the case was closed (if applicable) |
+
+## Linked Clients
+
+Cases can have multiple clients linked to them. The **Linked Clients** panel shows all clients associated with a case.
+
+### Client Roles
+
+| Role | Description |
+|------|-------------|
+| **Primary Client** | The main client for the matter (one per case) |
+| **Additional Client** | Secondary clients associated with the matter |
+
+### Viewing Linked Clients
+
+1. Navigate to **Case Records**
+2. Select a case
+3. View the **Linked Clients** panel showing all associated clients
+
+Each linked client shows:
+- Company name
+- Primary/Additional designation badge
+- Link to client profile
+
+### Adding a Client to a Case
+
+<Steps>
+  <Step title="Open Case">
+    Navigate to the case record
+  </Step>
+  <Step title="Find Linked Clients">
+    Locate the Linked Clients panel
+  </Step>
+  <Step title="Add Client">
+    Click "Add Client" button
+  </Step>
+  <Step title="Search">
+    Search for the client by company name
+  </Step>
+  <Step title="Set Primary">
+    Optionally check "Set as primary client"
+  </Step>
+  <Step title="Confirm">
+    Click "Link" to add the client
+  </Step>
+</Steps>
+
+<Tip>
+Clients that are already linked to the case won't appear in the search results.
+</Tip>
+
+### Setting a Primary Client
+
+Only one client can be the primary client per case:
+
+1. Find the client in the Linked Clients list
+2. Click the options menu (three dots)
+3. Select "Set as Primary"
+
+<Info>
+When you set a new primary client, any existing primary is automatically changed to an additional client.
+</Info>
+
+### Removing a Client
+
+1. Find the client in the Linked Clients list
+2. Click the options menu (three dots)
+3. Select "Unlink"
+4. Confirm the action
+
+<Warning>
+Removing a client from a case does not delete the client record - it only removes the association.
+</Warning>
+
+## Case Status
+
+| Status | Description |
+|--------|-------------|
+| Active | Currently in progress |
+| Pending | Awaiting action or decision |
+| Closed | Completed or concluded |
+| Archived | Historical record |
 
 ## Using Records
 
@@ -37,3 +128,10 @@ Case records help with:
 - Tracking barrister experience
 - Generating reports
 - Practice development analysis
+- Managing multi-party matters
+
+## Related Pages
+
+- [Client Details](/clerk/client-details) - View client profiles
+- [CRM Overview](/clerk/crm-overview) - Client relationship management
+- [Billing Overview](/clerk/billing-overview) - Financial tracking

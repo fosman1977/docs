@@ -1,10 +1,10 @@
 ---
 title: "Understanding AI Insights"
-description: "AI-powered business intelligence and recommendations"
+description: "AI-powered business intelligence with trajectory analysis"
 ---
 
 <Note>
-AI-powered insights to help you make informed decisions.
+AI-powered insights to help you make informed decisions, now with time-of-year trajectory analysis.
 </Note>
 
 ## What Are AI Insights?
@@ -14,23 +14,78 @@ AI Insights analyse your chambers data to identify:
 - Potential risks
 - Business opportunities
 - Anomalies requiring attention
+- **Trajectory status** - are you on track given where you are in the year?
+
+## Trajectory Analysis (New)
+
+The AI now considers **when in the year** you're viewing the data, not just year-end targets.
+
+### How It Works
+
+At any point in the year, the AI calculates where barristers **should** be based on a pro-rata share of their annual target:
+
+| Month | Expected Progress |
+|-------|------------------|
+| March (Q1) | ~25% |
+| June (Q2) | ~50% |
+| September (Q3) | ~75% |
+| December (Q4) | 100% |
+
+### Trajectory Statuses
+
+Each barrister is classified based on their current progress vs expected:
+
+| Status | Meaning | Action |
+|--------|---------|--------|
+| **AHEAD** | >5% above expected pace | Strong performer |
+| **ON TRACK** | Within ±5% of expected | No action needed |
+| **BEHIND PACE** | 5-15% below expected | Monitor closely |
+| **SIGNIFICANTLY BEHIND** | >15% below expected | Intervention needed |
+
+<Warning>
+A barrister showing GREEN status (e.g., 60% of target) in September is actually BEHIND PACE because they should be at ~75% by then. The AI flags this distinction.
+</Warning>
+
+### Example Analysis
+
+In **September** (month 9 of 12):
+- Expected pro-rata: 75%
+- Barrister A at 80%: **AHEAD** of pace
+- Barrister B at 73%: **ON TRACK**
+- Barrister C at 60%: **BEHIND PACE** (needs monitoring)
+- Barrister D at 45%: **SIGNIFICANTLY BEHIND** (urgent intervention)
 
 ## Types of Insights
 
 ### Performance Insights
-- Barrister performance trends
+- Barrister performance trends with **trajectory status**
 - Conversion rate analysis
 - Revenue forecasting
+- Year-over-year comparisons
 
 ### Risk Alerts
-- Cash flow concerns
+- Cash flow concerns (including bank balances and receivables)
 - Utilisation imbalances
 - Client concentration risks
+- **Barristers behind pace** requiring intervention
 
 ### Opportunity Identification
 - Growth areas
 - Underserved practice areas
 - Client development opportunities
+- Lead source performance
+
+## Data Included in Analysis
+
+The AI analyses comprehensive data from across the platform:
+
+- **Financial**: Billing, contributions, targets, aged debt
+- **Cash Flow**: Bank balances, outstanding invoices, runway
+- **Historical**: Year-over-year comparisons and trends
+- **Leads**: Conversion funnel, source performance
+- **Clients**: Relationship health, concentration risk
+- **Utilisation**: Work type distribution, capacity
+- **Website**: Practice area traffic, visitor companies
 
 ## Viewing Insights
 
@@ -39,14 +94,25 @@ Access from:
 - Dedicated AI Insights page
 - Email summaries (if configured)
 
+## Asking Questions
+
+Use the **AI Chat** feature to ask natural language questions about your data:
+
+- "Which barristers are behind their targets?"
+- "What's our cash position?"
+- "Which practice areas are growing?"
+- "Who needs more work?"
+
+The AI considers trajectory when answering, so asking "who's behind?" will identify barristers behind **pace**, not just behind year-end targets.
+
 ## Acting on Insights
 
 Each insight includes:
 - Summary of finding
-- Supporting data
+- Supporting data with trajectory context
 - Recommended actions
 - Links to relevant areas
 
 <Info>
-AI Insights are generated daily and updated as new data becomes available.
+AI Insights are generated daily at 6am and updated as new data becomes available. You can also refresh on-demand from the dashboard.
 </Info>

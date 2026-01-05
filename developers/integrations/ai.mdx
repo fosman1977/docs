@@ -1,41 +1,44 @@
 ---
 title: "AI Integration (Claude & OpenAI)"
-description: "Hybrid AI architecture with Claude and OpenAI for intelligent features"
+description: "AI architecture powering intelligent features across the platform"
 ---
 
-The Chambers Platform uses a **hybrid AI architecture** with both Anthropic Claude and OpenAI to power different features, each selected for optimal performance in their specific use cases.
+The Chambers Platform uses **Anthropic Claude** as the primary AI provider for strategic business intelligence, with OpenAI available for specific high-volume operations.
 
 ## Overview
 
 | Feature | AI Provider | Model | Reason |
 |---------|-------------|-------|--------|
 | Chamber Insights | **Claude (Anthropic)** | Claude Sonnet 4 | Superior reasoning for strategic analysis |
+| Daily Insights (Cron) | **Claude (Anthropic)** | Claude Sonnet 4 | Consistent trajectory analysis |
+| Natural Language Queries | **Claude (Anthropic)** | Claude Sonnet 4 | Complex question answering |
 | Lead Suggestions | **OpenAI** | GPT-4o-mini | Cost-effective matching |
-| Analytics Insights | **OpenAI** | GPT-4o-mini | Structured data analysis |
-| Risk Analysis | **OpenAI** | GPT-4o-mini | Pattern recognition |
 | Opportunity Suggestions | **OpenAI** | GPT-4o-mini | Fast recommendations |
-| Client Insights | **OpenAI** | GPT-4o-mini | Client intelligence analysis |
+
+<Note>
+As of January 2025, all strategic analytics endpoints have been consolidated to use Claude for consistency. This ensures trajectory analysis and time-of-year context is applied uniformly across all insights.
+</Note>
 
 ## Implementation Architecture
 
 <Note>
-The codebase contains two implementations for Chamber Insights - one using Claude (active in production) and a legacy OpenAI version kept for benchmarking purposes.
+All strategic insights endpoints now use Claude for consistency. The legacy OpenAI implementation is retained for benchmarking purposes but is not active in production.
 </Note>
 
 ### Active Services
 
 | Service File | Provider | Status |
 |--------------|----------|--------|
-| `chambers-insights-claude.service.server.ts` | Claude Sonnet 4 | **Active** |
-| `suggestion-engine.server.ts` | OpenAI GPT-4o-mini | Active |
-| `analytics-insights.service.server.ts` | OpenAI GPT-4o-mini | Active |
-| `risk-insights.service.server.ts` | OpenAI GPT-4o-mini | Active |
+| `chambers-insights-claude.service.server.ts` | Claude Sonnet 4 | **Active** - All insights |
+| `chambers-prompts-claude.ts` | Claude Sonnet 4 | **Active** - Prompt templates with trajectory analysis |
+| `suggestion-engine.server.ts` | OpenAI GPT-4o-mini | Active - Lead suggestions |
 
-### Legacy Services
+### Legacy Services (Not Active)
 
 | Service File | Provider | Status |
 |--------------|----------|--------|
-| `chambers-insights.service.server.ts` | OpenAI GPT-4o-mini | Legacy (benchmarking) |
+| `chambers-insights.service.server.ts` | OpenAI GPT-4o-mini | Legacy (benchmarking only) |
+| `chambers-prompts.ts` | OpenAI GPT-4o-mini | Legacy (benchmarking only) |
 
 ## Package Versions
 
@@ -78,10 +81,35 @@ The flagship AI feature uses Claude Sonnet 4 for strategic business analysis.
 **Capabilities:**
 
 - Financial risk analysis with severity scoring
-- Performance trend identification
+- Performance trend identification with **trajectory analysis**
 - Opportunity discovery
 - Executive summaries
 - Web-enhanced industry context
+- **Time-of-year target assessment**
+
+### Trajectory Analysis (New)
+
+All Claude-powered insights now include **trajectory analysis** - comparing current progress against where barristers/chambers should be at this point in the financial year.
+
+**How It Works:**
+
+1. **Pro-rata calculation**: At month 6, barristers should have achieved ~50% of their annual target
+2. **Gap analysis**: Compare actual progress vs expected pro-rata position
+3. **Status classification**:
+   - **AHEAD**: Current % > Expected % + 5%
+   - **ON TRACK**: Current % within ±5% of expected
+   - **BEHIND PACE**: Current % < Expected % - 5%
+   - **SIGNIFICANTLY BEHIND**: Current % < Expected % - 15%
+
+**Example:**
+```
+Month: September (month 9 of 12)
+Expected pro-rata: 75%
+Barrister at 60% progress:
+- RAG Status: AMBER (60% < 70% threshold)
+- Trajectory: BEHIND PACE (15 points below expected)
+- Assessment: Needs intervention - may miss year-end target at current pace
+```
 
 **Service:** `chambers-insights-claude.service.server.ts`
 
@@ -114,7 +142,7 @@ const response = await anthropic.messages.create({
 
 Uses OpenAI GPT-4o-mini for fast, cost-effective barrister matching.
 
-**Why OpenAI?**
+**Why OpenAI for Lead Suggestions?**
 
 - Faster response times for interactive features
 - More cost-effective for high-volume operations
@@ -134,18 +162,6 @@ const response = await openai.chat.completions.create({
   messages: [{ role: 'user', content: prompt }],
 });
 ```
-
-### Analytics Insights (`/api/ai/analytics-insights`)
-
-Uses OpenAI for lead conversion analysis and trend detection.
-
-**Service:** `analytics-insights.service.server.ts`
-
-### Risk Insights
-
-Uses OpenAI for financial risk pattern analysis.
-
-**Service:** `risk-insights.service.server.ts`
 
 **Token Costs (GPT-4o-mini):**
 
@@ -261,41 +277,44 @@ Get AI suggestions for lead assignment (OpenAI-powered).
 }
 ```
 
-### POST /api/ai/analytics-insights
+### POST /api/ai/chambers-insights/query
 
-Get AI insights for specific data (OpenAI-powered).
+Ask natural language questions about chambers analytics (Claude-powered).
 
 **Request:**
 ```json
 {
-  "type": "lead_conversion",
-  "period": "last_quarter",
-  "filters": {
-    "practiceArea": "Commercial Litigation"
+  "question": "Which barristers are behind their targets?",
+  "context": "performance review",
+  "year": 2025
+}
+```
+
+**Response:**
+```json
+{
+  "answer": "Based on trajectory analysis, 3 barristers are significantly behind pace...",
+  "confidence": "high",
+  "sources": [
+    { "type": "financial", "description": "Barrister billing data" }
+  ],
+  "relatedInsights": ["Consider reviewing workload distribution"],
+  "suggestedFollowUps": ["What practice areas have the most capacity?"],
+  "metadata": {
+    "ai_model": "claude-3-5-sonnet",
+    "processing_time_ms": 1200
   }
 }
 ```
 
-### POST /api/ai/client-insights
+### POST /api/ai/suggestions
 
-Get AI-powered client intelligence analysis.
-
-**Request:**
-```json
-{
-  "clientId": "uuid",
-  "analysisType": "relationship_health"
-}
-```
-
-### POST /api/ai/opportunities/suggestions
-
-Get AI suggestions for opportunity matching.
+Get AI suggestions for lead assignment (OpenAI-powered).
 
 **Request:**
 ```json
 {
-  "opportunityId": "uuid"
+  "leadId": "uuid"
 }
 ```
 
@@ -438,7 +457,23 @@ Control AI features in Settings:
 | Service | Provider | File |
 |---------|----------|------|
 | Chamber Insights | Claude | `chambers-insights-claude.service.server.ts` |
+| Daily Cron Insights | Claude | `generate-daily-insights/+server.ts` |
+| Natural Language Query | Claude | `chambers-insights/query/+server.ts` |
+| Prompt Templates | Claude | `chambers-prompts-claude.ts` |
 | Lead Suggestions | OpenAI | `suggestion-engine.server.ts` |
-| Analytics Insights | OpenAI | `analytics-insights.service.server.ts` |
-| Risk Insights | OpenAI | `risk-insights.service.server.ts` |
-| Batch Processing | OpenAI | `batch-processing.service.ts` |
+| Legacy Insights (unused) | OpenAI | `chambers-insights.service.server.ts` |
+
+## Data Sources for AI Analytics
+
+The AI aggregator gathers data from multiple sources for comprehensive analysis:
+
+| Data Type | Source | Description |
+|-----------|--------|-------------|
+| Financial | `work_done_barrister_summaries` | Billing and revenue data |
+| Targets | `financial_targets` | Annual targets and progress |
+| Cash Flow | `bank_accounts`, `xero_financial_records` | Bank balances and invoices |
+| YoY History | `work_done_barrister_summaries` (prev year) | Year-over-year comparisons |
+| Leads | `leads`, `lead_assignments` | Lead funnel and conversions |
+| Clients | `clients`, `client_barrister_relationships` | Client relationships and risk |
+| Utilisation | `utilisation_entries` | Work type distribution |
+| Website | `ga4_page_views` | Practice area traffic |
